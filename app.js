@@ -18,6 +18,38 @@ app.use((req, res, next) => {
     next();
 });
 
+// function for users
+const getAllUser = (req, res) => {
+    res.status(500).json({
+        status: 'fail',
+        message: 'functions yet to be implimented',
+    });
+};
+const createNewUser = (req, res) => {
+    res.status(500).json({
+        status: 'fail',
+        message: 'functions yet to be implimented',
+    });
+};
+const getUser = (req, res) => {
+    res.status(500).json({
+        status: 'fail',
+        message: 'functions yet to be implimented',
+    });
+};
+const updateUser = (req, res) => {
+    res.status(500).json({
+        status: 'fail',
+        message: 'functions yet to be implimented',
+    });
+};
+const deleteUser = (req, res) => {
+    res.status(500).json({
+        status: 'fail',
+        message: 'functions yet to be implimented',
+    });
+};
+
 // 2. founction for tours
 const tours = JSON.parse(
     fs.readFileSync(
@@ -103,12 +135,6 @@ const deleteTour = (req, res) => {
     });
 };
 
-// app.get('/api/v1/tours', getAllTour);
-// app.post('/api/v1/tours', createNewTour);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
 // 3. Routes
 app.route('/api/v1/tours')
     .get(getAllTour)
@@ -119,7 +145,16 @@ app.route('/api/v1/tours/:id')
     .patch(updateTour)
     .delete(deleteTour);
 
-// 4.Listening request
+app.route('/api/v1/users')
+    .get(getAllUser)
+    .post(createNewUser);
+
+app.route('/api/v1/users/:id')
+    .get(getUser)
+    .patch(updateUser)
+    .delete(deleteUser);
+
+// 4.Starting Server
 const port = 3000;
 app.listen(port, () => {
     console.log(`listening to port ${port}..`);
@@ -132,4 +167,5 @@ app.listen(port, () => {
 
 404 = not found 
 
+500 = internal server error
 */
