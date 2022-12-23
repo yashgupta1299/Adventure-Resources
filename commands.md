@@ -6,9 +6,12 @@
 2. check service is activated or not by running:
    "brew services"
 
-3. Then try to connect through local host in an application
+3. you can also run you connection in a terminal by:
+   "mongosh"
 
-4. After all work close connection in terminal by running a command
+4. Then try to connect through local host in an application
+
+5. After all work close connection in terminal by running a command
    "brew services stop mongodb-community@6.0"
 
 <!--! installing package -->
@@ -45,3 +48,18 @@
 
 4. To update package.json version numbers, append the --save flag:
    "npm update --save"
+
+5. To update all packages in package.json irrespective of its tag:
+   install:
+   "npm i -g npm-check-updates"
+
+    change all package to latest version in package.json by:
+    "ncu -u"
+    or replace their version with "\*"
+
+    install package according to package.json by:
+    "npm install"
+
+    then if you used "\*" then you have to update package.json
+    according to latest version by running:
+    "npm update --save"
