@@ -4,8 +4,10 @@ const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 
-// 1. Middleware
-app.use(morgan('dev'));
+// Middleware
+if (process.env.NODE_ENV == 'development') {
+    app.use(morgan('dev'));
+}
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
@@ -17,7 +19,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// 3. Routes
+// Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
