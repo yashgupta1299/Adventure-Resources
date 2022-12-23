@@ -8,7 +8,7 @@ exports.checkId = (req, res, next, val) => {
     if (req.params.id * 1 >= tours.length) {
         return res.status(404).json({
             status: 'fail',
-            message: 'invalid id',
+            message: 'invalid id'
         });
     }
     next();
@@ -18,7 +18,7 @@ exports.checkBody = (req, res, next) => {
     if (!req.body.name || !req.body.price) {
         return res.status(400).json({
             status: 'fail',
-            message: 'Missing name or price ',
+            message: 'Missing name or price'
         });
     }
     next();
@@ -29,7 +29,7 @@ exports.getAllTour = (req, res) => {
         status: 'success',
         requestTime: req.requestTime,
         results: tours.length,
-        data: { tours },
+        data: { tours }
     });
 };
 
@@ -40,12 +40,12 @@ exports.createNewTour = (req, res) => {
     fs.writeFile(
         `${__dirname}/dev-data/data/tours-simple.json`,
         JSON.stringify(tours),
-        (err) => {
+        err => {
             res.status(201).json({
                 status: 'success',
                 data: {
-                    tour: newTour,
-                },
+                    tour: newTour
+                }
             });
         }
     );
@@ -54,12 +54,12 @@ exports.createNewTour = (req, res) => {
 exports.getTour = (req, res) => {
     // app.get('/api/v1/tours/:id/:x?', (req, res) => {
     const id = req.params.id * 1;
-    const tour = tours.find((el) => el.id === id);
+    const tour = tours.find(el => el.id === id);
     res.status(200).json({
         status: 'success',
         data: {
-            tour,
-        },
+            tour
+        }
     });
 };
 
@@ -67,14 +67,14 @@ exports.updateTour = (req, res) => {
     res.status(200).json({
         status: 'success',
         data: {
-            tour: '< updated tour here >',
-        },
+            tour: '< updated tour here >'
+        }
     });
 };
 
 exports.deleteTour = (req, res) => {
     res.status(204).json({
         status: 'success',
-        data: null,
+        data: null
     });
 };

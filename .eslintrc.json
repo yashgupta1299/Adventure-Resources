@@ -4,7 +4,8 @@
     "rules": {
         "prettier/prettier": "error",
         "spaced-comment": "off",
-        "no-console": "warn",
+        // "no-console": "warn",
+        "no-console": "off",
         "consistent-return": "off",
         "func-names": "off",
         "object-shorthand": "off",
@@ -23,7 +24,8 @@
         "no-unused-vars": [
             "error",
             {
-                "argsIgnorePattern": "req|res|next|val"
+                // "argsIgnorePattern": "req|res|next|val"
+                "argsIgnorePattern": "req|res|next|val|err"
             }
         ]
     }
