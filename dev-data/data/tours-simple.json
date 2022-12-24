@@ -169,23 +169,5 @@
             "2022-01-16,10:00",
             "2022-12-12,10:00"
         ]
-    },
-    {
-        "id": 9,
-        "name": "The Forest Hiker",
-        "duration": 15,
-        "difficulty": "easy"
-    },
-    {
-        "id": 10,
-        "name": "The Forest Hiker",
-        "duration": 151,
-        "difficulty": "easy"
-    },
-    {
-        "id": 11,
-        "name": "The Forest Hiker",
-        "duration": 1521,
-        "difficulty": "easy"
     }
 ]

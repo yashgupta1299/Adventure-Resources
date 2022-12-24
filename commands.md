@@ -63,3 +63,11 @@
     then if you used "\*" then you have to update package.json
     according to latest version by running:
     "npm update --save"
+
+<!--! import and delete all data in a database [custom command] -->
+
+1. import
+   "node dbConfigScript.js --import"
+
+2) delete
+   "node dbConfigScript.js --delete"
