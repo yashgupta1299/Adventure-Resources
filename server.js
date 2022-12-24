@@ -5,13 +5,13 @@ dotenv.config({ path: './config.env' });
 const app = require('./app');
 
 // connecting to a remote database
-const DB = process.env.DATABASE.replace(
-    '<PASSWORD>',
-    process.env.DATABASE_PASSWORD
-);
+// const DB = process.env.DATABASE.replace(
+//     '<PASSWORD>',
+//     process.env.DATABASE_PASSWORD
+// );
 
 // connecting to a local database
-// const DBL = process.env.DATABASE_LOCAL;
+const DB = process.env.DATABASE_LOCAL;
 // console.log(DB);
 
 mongoose
