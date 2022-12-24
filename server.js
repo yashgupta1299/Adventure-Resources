@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
+// note: dotenv.config must be configured before app
 const dotenv = require('dotenv');
-
-dotenv.config({ path: './config.env' }); // note: must be declared before app
+dotenv.config({ path: './config.env' });
 const app = require('./app');
 
 // connecting to a remote database
@@ -9,9 +9,11 @@ const DB = process.env.DATABASE.replace(
     '<PASSWORD>',
     process.env.DATABASE_PASSWORD
 );
+
 // connecting to a local database
 // const DBL = process.env.DATABASE_LOCAL;
-console.log(DB);
+// console.log(DB);
+
 mongoose
     .connect(DB, {
         useNewUrlParser: true,
@@ -19,9 +21,12 @@ mongoose
         useFindAndModify: false,
         useUnifiedTopology: true
     })
-    .then(() => {
+    .then(con => {
         // console.log(con.connections);
-        console.log('successful!');
+        console.log('DB connection successful!');
+    })
+    .catch(err => {
+        console.log('error 🔥 ', err);
     });
 
 // Starting Server

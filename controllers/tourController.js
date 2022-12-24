@@ -1,80 +1,95 @@
-const fs = require('fs');
+const Tour = require('./../models/tourModel');
 
-const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
-
-exports.checkId = (req, res, next, val) => {
-    if (req.params.id * 1 >= tours.length) {
-        return res.status(404).json({
+exports.getAllTour = async (req, res) => {
+    try {
+        const tours = await Tour.find();
+        res.status(200).json({
+            status: 'success',
+            requestTime: req.requestTime,
+            results: tours.length,
+            data: {
+                tours
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
             status: 'fail',
-            message: 'invalid id'
+            err
         });
     }
-    next();
 };
 
-exports.checkBody = (req, res, next) => {
-    if (!req.body.name || !req.body.price) {
-        return res.status(400).json({
+exports.createNewTour = async (req, res) => {
+    try {
+        // const testTour = new Tour({});
+        // testTour.save((doc)=>{});
+        // console.log("here");
+        console.log('here', req.body);
+        const newTour = await Tour.create(req.body);
+        res.status(201).json({
+            status: 'success',
+            data: {
+                tour: newTour
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
             status: 'fail',
-            message: 'Missing name or price'
+            message: 'Invalid Content',
+            err
         });
     }
-    next();
 };
 
-exports.getAllTour = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        requestTime: req.requestTime,
-        results: tours.length,
-        data: { tours }
-    });
+exports.getTour = async (req, res) => {
+    try {
+        const tour = await Tour.findById(req.params.id);
+        // const tour = await Tour.findOne({ _id: req.params.id });
+        res.status(200).json({
+            status: 'success',
+            data: {
+                tour
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            err
+        });
+    }
 };
 
-exports.createNewTour = (req, res) => {
-    const newID = tours[tours.length - 1].id + 1;
-    const newTour = Object.assign({ id: newID }, req.body);
-    tours.push(newTour);
-    fs.writeFile(
-        `${__dirname}/dev-data/data/tours-simple.json`,
-        JSON.stringify(tours),
-        err => {
-            res.status(201).json({
-                status: 'success',
-                data: {
-                    tour: newTour
-                }
-            });
-        }
-    );
+exports.updateTour = async (req, res) => {
+    try {
+        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+            new: true, // without this working?
+            runValidators: true // without this working?
+        });
+        res.status(200).json({
+            status: 'success',
+            data: {
+                tour
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            err
+        });
+    }
 };
 
-exports.getTour = (req, res) => {
-    // app.get('/api/v1/tours/:id/:x?', (req, res) => {
-    const id = req.params.id * 1;
-    const tour = tours.find(el => el.id === id);
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour
-        }
-    });
-};
-
-exports.updateTour = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour: '< updated tour here >'
-        }
-    });
-};
-
-exports.deleteTour = (req, res) => {
-    res.status(204).json({
-        status: 'success',
-        data: null
-    });
+exports.deleteTour = async (req, res) => {
+    try {
+        await Tour.findByIdAndDelete(req.params.id);
+        res.status(204).json({
+            status: 'success',
+            data: null
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            err
+        });
+    }
 };
