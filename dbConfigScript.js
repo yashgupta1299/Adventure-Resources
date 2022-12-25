@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Tour = require('./models/tourModel');
 const dotenv = require('dotenv');
+const Tour = require('./models/tourModel');
 
 dotenv.config({ path: './config.env' });
 
@@ -22,7 +22,7 @@ mongoose
         useFindAndModify: false,
         useUnifiedTopology: true
     })
-    .then(con => {
+    .then(() => {
         // console.log(con.connections);
         console.log('DB connection successful!');
     })
@@ -56,9 +56,9 @@ const importAllData = async () => {
 };
 
 // console.log(process.argv);
-if (process.argv[2] == '--import') {
+if (process.argv[2] === '--import') {
     importAllData();
-} else if (process.argv[2] == '--delete') {
+} else if (process.argv[2] === '--delete') {
     deleteAllData();
 } else {
     console.log('Invalid Command!');

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 // note: dotenv.config must be configured before app
 const dotenv = require('dotenv');
+
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
@@ -21,7 +22,7 @@ mongoose
         useFindAndModify: false,
         useUnifiedTopology: true
     })
-    .then(con => {
+    .then(() => {
         // console.log(con.connections);
         console.log('DB connection successful!');
     })

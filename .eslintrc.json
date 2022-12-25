@@ -21,13 +21,13 @@
                 "array": false
             }
         ],
-        "no-unused-vars": [false]
-        // "no-unused-vars": [
-        //     "error",
-        //     {
-        //         // "argsIgnorePattern": "req|res|next|val"
-        //         "argsIgnorePattern": "req|res|next|val|err"
-        //     }
-        // ]
+        // "no-unused-vars": [false]
+        "no-unused-vars": [
+            "error",
+            {
+                // "argsIgnorePattern": "req|res|next|val"
+                "argsIgnorePattern": "req|res|next|val|err"
+            }
+        ]
     }
 }
