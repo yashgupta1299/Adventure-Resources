@@ -1,12 +1,11 @@
 const express = require('express');
-
-const app = express();
 const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const AppError = require('./utils/AppError');
 const globalErrorController = require('./controllers/globalErrorController');
 
+const app = express();
 // Middleware
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
