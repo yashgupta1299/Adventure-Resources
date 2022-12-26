@@ -2,19 +2,19 @@
     {
         "name": "1",
         "email": "1@1.com",
-        "password": "11111111",
-        "passwordConfirm": "11111111"
+        "password": "10000000",
+        "passwordConfirm": "10000000"
     },
     {
         "name": "2",
         "email": "2@2.com",
-        "password": "22222222",
-        "passwordConfirm": "22222222"
+        "password": "20000000",
+        "passwordConfirm": "20000000"
     },
     {
         "name": "3",
         "email": "3@3.com",
-        "password": "33333333",
-        "passwordConfirm": "33333333"
+        "password": "30000000",
+        "passwordConfirm": "30000000"
     }
 ]

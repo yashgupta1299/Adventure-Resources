@@ -16,13 +16,16 @@ router.route('/monthly-plan/:year').get(tourController.getmonthlyPlan);
 router
     .route('/')
     .get(authController.protect, tourController.getAllTour)
-    // .get(tourController.getAllTour)
     .post(tourController.createNewTour);
 
 router
     .route('/:id')
     .get(tourController.getTour)
     .patch(tourController.updateTour)
-    .delete(tourController.deleteTour);
+    .delete(
+        authController.protect,
+        authController.restricedTo('admin', 'lead-guide'),
+        tourController.deleteTour
+    );
 
 module.exports = router;

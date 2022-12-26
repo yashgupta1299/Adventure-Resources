@@ -91,3 +91,18 @@ exports.protect = catchAsync(async (req, res, next) => {
     // all safe Grant Access
     next();
 });
+
+exports.restricedTo = (...roles) => {
+    return (req, res, next) => {
+        // roles is an array ['admin','lead-guide']
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new AppError(
+                    'you are not authorized to perform this action!',
+                    403
+                )
+            );
+        }
+        next();
+    };
+};
