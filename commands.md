@@ -66,8 +66,8 @@
 
 <!--! import and delete all data in a database [custom command] -->
 
-1. import
-   "node dbConfigScript.js --import"
-
-2) delete
-   "node dbConfigScript.js --delete"
+1. A = import or delete
+   B = tours or users
+   C = local or cloud
+   note: choosing first character also work
+   "node dbconfig.js <%A%> <%B%> <%C%>"

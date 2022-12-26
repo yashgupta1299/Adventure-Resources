@@ -23,8 +23,7 @@ const sendErrorProd = (err, res) => {
         // Send generic message as this is a new error
         res.status(500).json({
             status: 'error',
-            message: 'Something went wrong!',
-            error: err
+            message: 'Something went wrong!'
         });
     }
 };
@@ -72,6 +71,7 @@ module.exports = (err, req, res, next) => {
 201 = create
 204 = no longer exist (after delete)
 400 = bad request
+401 = unauthorized
 404 = not found 
 500 = internal server error
 */
