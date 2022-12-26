@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const util = require('util');
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/AppError');
@@ -29,22 +30,64 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
-    // check wheather email and password is given or not
+    //1. check wheather email and password is given or not
     if (!email || !password) {
         return next(new AppError('Please provide email and password', 400));
     }
 
-    // check if user exists and password is correct or not
+    //2. check if user exists and password is correct or not
     const user = await User.findOne({ email }).select('+password');
-    // console.log(user);
+    // password is original which is taken from user
+    // user.passwor is coming from a database which is stored in hash form
     if (!user || !(await user.correctPassword(password, user.password))) {
         return next(new AppError('Please enter valid email or password', 401));
     }
 
-    // everythin is ok
+    // everything is ok
     const token = jwtSignToken(user._id);
     res.status(201).json({
         status: 'success',
         token
     });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+    //1. Check weather token is present or not and extract it if present
+    let token;
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    if (!token) {
+        return next(
+            new AppError('you are not logged in please log in to get access')
+        );
+    }
+
+    //2. verify the token and if it failed promise is rejected
+    const decoded = await util.promisify(jwt.verify)(
+        token,
+        process.env.JWT_SECRET_KEY
+    );
+
+    //3. check if user still exists in our database
+    const dbUser = await User.findById(decoded.id);
+    if (!dbUser) {
+        return next(new AppError('The user no longer exists!'));
+    }
+
+    //4. check if password is changed or not after the issue of token
+    if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
+        return next(
+            new AppError('Password is recently changed, please log in again:')
+        );
+    }
+
+    // storing for using in upcoming middlewares
+    req.user = dbUser;
+
+    // all safe Grant Access
+    next();
 });

@@ -30,7 +30,8 @@ const userSchema = new mongoose.Schema({
             },
             message: 'Password do not match'
         }
-    }
+    },
+    passwordChangedAt: Date
 });
 
 // runs on CREATE and SAVE
@@ -52,6 +53,17 @@ userSchema.pre('save', async function(next) {
 // instance method available for all documents of a certain collection
 userSchema.methods.correctPassword = async function(origPass, hashPass) {
     return await bcrypt.compare(origPass, hashPass);
+};
+
+userSchema.methods.isTokenIssuedBeforePassChanged = function(JWTissuedTime) {
+    if (this.passwordChangedAt) {
+        const passChangedAt = parseInt(
+            this.passwordChangedAt.getTime() / 1000,
+            10
+        );
+        return JWTissuedTime < passChangedAt;
+    }
+    return false;
 };
 
 const User = mongoose.model('User', userSchema);
