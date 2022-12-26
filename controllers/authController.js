@@ -106,3 +106,29 @@ exports.restricedTo = (...roles) => {
         next();
     };
 };
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // check email provided or not
+    if (!req.body.email) {
+        return next(new AppError(`Provide valid email address`, 400));
+    }
+
+    // 1. obtain the user from the database acc to email if user exist in db
+    const dbUser = await User.findOne({ email: req.body.email });
+    if (!dbUser) {
+        return next(
+            new AppError(
+                `User with email-address: ${req.body.email} do not exist!`,
+                404
+            )
+        );
+    }
+
+    // 2. generate the random reset token
+    const resetToken = dbUser.createPasswordResetToken();
+    await dbUser.save({ validateBeforeSave: false });
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+    next();
+});

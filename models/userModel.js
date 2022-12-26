@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -36,9 +37,12 @@ const userSchema = new mongoose.Schema({
             message: 'Password do not match'
         }
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date
 });
 
+// function to create hash before saving the password
 // runs on CREATE and SAVE
 userSchema.pre('save', async function(next) {
     // isModified function:
@@ -60,6 +64,7 @@ userSchema.methods.correctPassword = async function(origPass, hashPass) {
     return await bcrypt.compare(origPass, hashPass);
 };
 
+// function to check is Token Issued Before PassChanged
 userSchema.methods.isTokenIssuedBeforePassChanged = function(JWTissuedTime) {
     if (this.passwordChangedAt) {
         const passChangedAt = parseInt(
@@ -69,6 +74,20 @@ userSchema.methods.isTokenIssuedBeforePassChanged = function(JWTissuedTime) {
         return JWTissuedTime < passChangedAt;
     }
     return false;
+};
+
+userSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    console.log({ resetToken }, this.passwordResetToken);
+
+    return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);
