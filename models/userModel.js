@@ -59,6 +59,16 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+userSchema.pre('save', function(next) {
+    // if password is not modified or its new then return
+    if (!this.isModified('password') || this.isNew) return next();
+
+    // set the current time minus 1 sec (to accomodate delay if it happened)
+    // because we are also issue jwt
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
 // instance method available for all documents of a certain collection
 userSchema.methods.correctPassword = async function(origPass, hashPass) {
     return await bcrypt.compare(origPass, hashPass);
