@@ -1,7 +1,6 @@
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/AppError');
-const { findByIdAndUpdate } = require('./../models/userModel');
 
 const filterObj = (body, ...fieldKeep) => {
     const obj = {};
@@ -52,6 +51,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
         data: {
             updatedUser
         }
+    });
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+    // get the user id using privous middleware as (req.user.id) and delete it
+    await User.findByIdAndUpdate(req.user.id, { active: false });
+    res.status(204).json({
+        status: 'success',
+        data: null
     });
 });
 

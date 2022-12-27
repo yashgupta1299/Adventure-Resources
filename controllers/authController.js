@@ -12,22 +12,26 @@ const jwtSignToken = id => {
     });
 };
 
-const createSendjwt = (user, statusCode, res, dataFlag) => {
+const cookieOptions = {
+    expires: new Date(
+        Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true // cannot be changed by browser
+    //secure: true // connection can be done only over https
+};
+if (process.env.NODE_ENV === 'production') {
+    cookieOptions.secure = true;
+}
+const createSendjwt = (user, statusCode, res) => {
     const token = jwtSignToken(user.id);
-    if (dataFlag) {
-        res.status(statusCode).json({
-            status: 'success',
-            token,
-            data: {
-                user
-            }
-        });
-    } else {
-        res.status(statusCode).json({
-            status: 'success',
-            token
-        });
-    }
+    res.cookie('jwt', token, cookieOptions);
+    user.password = undefined;
+    res.status(statusCode).json({
+        status: 'success',
+        data: {
+            user
+        }
+    });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
@@ -58,7 +62,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // everything is ok
-    createSendjwt(user, 201, res, false);
+    createSendjwt(user, 201, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -206,7 +210,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // send the jwt token
-    createSendjwt(dbUser, 201, res, false);
+    createSendjwt(dbUser, 201, res);
 });
 */
 
@@ -300,7 +304,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // send the jwt token
-    createSendjwt(dbUser, 201, res, false);
+    createSendjwt(dbUser, 201, res);
 });
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
@@ -323,6 +327,6 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
     // 3 passwordChangedAt variable also updated
     await dbUser.save();
 
-    // 4 log user in, send
-    createSendjwt(dbUser, 201, res, false);
+    // 4 log user in, send jwt
+    createSendjwt(dbUser, 201, res);
 });

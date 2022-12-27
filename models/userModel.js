@@ -39,7 +39,12 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetExpires: Date
+    passwordResetExpires: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    }
 });
 
 // function to create hash before saving the password
@@ -67,6 +72,12 @@ userSchema.pre('save', function(next) {
     // set the current time minus 1 sec (to accomodate delay if it happened)
     // because we are also issue jwt
     this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
+// pre query Middleware
+userSchema.pre(/^find/, async function(next) {
+    this.find({ active: { $ne: false } });
     next();
 });
 
