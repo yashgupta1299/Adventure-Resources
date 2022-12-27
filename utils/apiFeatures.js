@@ -16,6 +16,8 @@ class APIfeatures {
             /\b(gte|gt|lte|lt)\b/g,
             match => `$${match}`
         );
+        //say console.log(JSON.parse(queryStr)); is { ratingsAverage: [ '4.8', '4.5' ] }
+        // mongoose give me or result in between elements of array
         this.query = this.query.find(JSON.parse(queryStr));
         return this;
     }

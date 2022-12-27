@@ -1,17 +1,69 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const AppError = require('./utils/AppError');
 const globalErrorController = require('./controllers/globalErrorController');
 
 const app = express();
-// Middleware
+// Global Middlewares
+
+// set security http headers
+app.use(helmet()); // helmet() will return a function which sits here
+
+// development logging
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
-app.use(express.json());
+
+// limit requests from same api
+const limiter = rateLimit({
+    max: 300,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+
+// body parser reading data from body into req.body and also limit the body size
+app.use(express.json({ limit: '10kb' }));
+
+// data sanitization against NoSQL query injection
+// check  req.boby, req.params etc to prevent from
+// "email":{ "$gt" : ""}, this type of things
+app.use(mongoSanitize());
+
+// Data sanitization again xss
+// prevent from adding javascript or html code, say by changing html symbol to its entities
+app.use(xss());
+
+//Prevent parameter pollution
+// say if i give ?sort=price&sort=ratingsAverage then it will take
+// only last value of sort
+// whitelist means it will ignore those fields
+// say if i give ?ratingsAverage=4.8&ratingsAverage=4.5
+// default behaviour req.query = { ratingsAverage: [ '4.8', '4.5' ] }
+app.use(
+    hpp({
+        whitelist: [
+            'duration',
+            'ratingsQuantity',
+            'ratingsAverage',
+            'maxGroupSize',
+            'difficulty',
+            'price'
+        ]
+    })
+);
+
+// serving static files
 app.use(express.static(`${__dirname}/public`));
+
+// test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();

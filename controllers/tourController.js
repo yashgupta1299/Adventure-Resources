@@ -87,6 +87,7 @@ exports.getmonthlyPlan = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllTour = catchAsync(async (req, res, next) => {
+    console.log(req.query);
     const features = new APIfeatures(Tour.find(), req.query)
         .filtering()
         .sort()
