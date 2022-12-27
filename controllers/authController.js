@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const util = require('util');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/AppError');
@@ -12,6 +12,24 @@ const jwtSignToken = id => {
     });
 };
 
+const createSendjwt = (user, statusCode, res, dataFlag) => {
+    const token = jwtSignToken(user.id);
+    if (dataFlag) {
+        res.status(statusCode).json({
+            status: 'success',
+            token,
+            data: {
+                user
+            }
+        });
+    } else {
+        res.status(statusCode).json({
+            status: 'success',
+            token
+        });
+    }
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
         name: req.body.name,
@@ -19,14 +37,8 @@ exports.signup = catchAsync(async (req, res, next) => {
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm
     });
-    const token = jwtSignToken(newUser._id);
-    res.status(201).json({
-        status: 'success',
-        token,
-        data: {
-            user: newUser
-        }
-    });
+
+    createSendjwt(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -46,11 +58,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // everything is ok
-    const token = jwtSignToken(user._id);
-    res.status(201).json({
-        status: 'success',
-        token
-    });
+    createSendjwt(user, 201, res, false);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -64,7 +72,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
     if (!token) {
         return next(
-            new AppError('you are not logged in please log in to get access')
+            new AppError(
+                'you are not logged in please log in to get access',
+                401
+            )
         );
     }
 
@@ -77,13 +88,16 @@ exports.protect = catchAsync(async (req, res, next) => {
     //3. check if user still exists in our database
     const dbUser = await User.findById(decoded.id);
     if (!dbUser) {
-        return next(new AppError('The user no longer exists!'));
+        return next(new AppError('The user no longer exists!', 401));
     }
 
     //4. check if password is changed or not after the issue of token
     if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
         return next(
-            new AppError('Password is recently changed, please log in again:')
+            new AppError(
+                'Password is recently changed, please log in again:',
+                401
+            )
         );
     }
 
@@ -109,6 +123,7 @@ exports.restricedTo = (...roles) => {
     };
 };
 
+/*
 exports.forgotPassword = catchAsync(async (req, res, next) => {
     // check email provided or not
     if (!req.body.email) {
@@ -128,7 +143,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     // 2. generate the random reset token
     const resetToken = dbUser.createPasswordResetToken();
-    // save token to database
+    // save token and passwordResetExpires in database
     await dbUser.save({ validateBeforeSave: false });
 
     // 3. send it to users email
@@ -191,9 +206,123 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // send the jwt token
-    const token = jwtSignToken(dbUser._id);
-    res.status(201).json({
-        status: 'success',
-        token
+    createSendjwt(dbUser, 201, res, false);
+});
+*/
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // check email provided or not
+    if (!req.body.email) {
+        return next(new AppError(`Provide valid email address`, 400));
+    }
+
+    // 1. obtain the user from the database acc to email if user exist in db
+    const dbUser = await User.findOne({ email: req.body.email });
+    if (!dbUser) {
+        return next(
+            new AppError(
+                `User with email-address: ${req.body.email} do not exist!`,
+                404
+            )
+        );
+    }
+
+    // 2. generate the random reset token jwt with email as id
+    const resetToken = jwtSignToken(dbUser.email);
+
+    // save password Reset Expires time to database (10 min)
+    dbUser.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    await dbUser.save({
+        validateBeforeSave: false
     });
+
+    // 3. send it to users email
+
+    // generating resetURL
+    // req.get('host') is "127.0.0.1:3000"
+    // req.protocol is "http"
+    const resetURL = `${req.protocol}://${req.get(
+        'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+
+    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+
+    try {
+        await sendEmail({
+            email: req.body.email,
+            subject: 'Your password reset token (valid for 10 min)',
+            message
+        });
+        res.status(200).json({
+            status: 'success',
+            message: 'Token sent to email'
+        });
+    } catch (err) {
+        dbUser.passwordResetExpires = undefined;
+        await dbUser.save({ validateBeforeSave: false });
+        return next(
+            new AppError(
+                'There is an error in sending the email please try again later!'
+            ),
+            500
+        );
+    }
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+    if (!req.params.token) {
+        return next(new AppError('Provide a valid token', 400));
+    }
+
+    // verify the token and if it failed promise is rejected
+    const decoded = await util.promisify(jwt.verify)(
+        req.params.token,
+        process.env.JWT_SECRET_KEY
+    );
+    // console.log(decoded);
+    // check if user still exists in our database and reset token issued time
+    const dbUser = await User.findOne({
+        email: decoded.id,
+        passwordResetExpires: { $gt: Date.now() }
+    });
+    if (!dbUser) {
+        return next(
+            new AppError('The token is invalid or already expired!', 400)
+        );
+    }
+    // authentication completed
+    // change the data
+    dbUser.password = req.body.password;
+    dbUser.passwordConfirm = req.body.passwordConfirm;
+    dbUser.passwordResetExpires = undefined;
+    // here we run save because we want validation of our argument again
+    // because of save function validators will run
+    await dbUser.save();
+
+    // send the jwt token
+    createSendjwt(dbUser, 201, res, false);
+});
+
+exports.updateMyPassword = catchAsync(async (req, res, next) => {
+    // 1 get user from the database
+    // note: req.user.id is same as req.user._id
+    const dbUser = await User.findById(req.user.id).select('+password');
+
+    // 2 check if posted current password is correct
+    if (
+        !(await dbUser.correctPassword(
+            req.body.currentPassword,
+            dbUser.password
+        ))
+    ) {
+        return next(new AppError('Current password is wrong!', 401));
+    }
+
+    dbUser.password = req.body.password;
+    dbUser.passwordConfirm = req.body.passwordConfirm;
+    // 3 passwordChangedAt variable also updated
+    await dbUser.save();
+
+    // 4 log user in, send
+    createSendjwt(dbUser, 201, res, false);
 });

@@ -59,8 +59,9 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+// updating passwordChangedAt variable
 userSchema.pre('save', function(next) {
-    // if password is not modified or its new then return
+    // if password is not modified or doc its new then return
     if (!this.isModified('password') || this.isNew) return next();
 
     // set the current time minus 1 sec (to accomodate delay if it happened)
