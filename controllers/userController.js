@@ -63,24 +63,38 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     });
 });
 
+// implimented via signup
 exports.createNewUser = (req, res) => {
     res.status(500).json({
         status: 'fail',
         message: 'functions yet to be implimented'
     });
 };
-exports.getUser = (req, res) => {
-    res.status(500).json({
-        status: 'fail',
-        message: 'functions yet to be implimented'
+
+exports.getUser = catchAsync(async (req, res, next) => {
+    const user = User.findById(req.params.id);
+
+    if (!user) {
+        // console.log('here');
+        return next(
+            new AppError(`User with ID: ${req.params.id} do not exists`, 404)
+        );
+    }
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user
+        }
     });
-};
+});
+
 exports.updateUser = (req, res) => {
     res.status(500).json({
         status: 'fail',
         message: 'functions yet to be implimented'
     });
 };
+
 exports.deleteUser = (req, res) => {
     res.status(500).json({
         status: 'fail',

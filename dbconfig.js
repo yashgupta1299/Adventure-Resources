@@ -1,8 +1,15 @@
+// A = import or delete
+// B = tours or users or reviews
+// C = local or cloud
+// note: choosing first character also work
+// "node dbconfig.js <%A%> <%B%> <%C%>"
+
 const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Tour = require('./models/tourModel');
 const User = require('./models/userModel');
+const Review = require('./models/reviewModel');
 
 dotenv.config({ path: './config.env' });
 // console.log(process.argv);
@@ -46,7 +53,18 @@ if (process.argv[3] === 'tours' || process.argv[3] === 't') {
 } else if (process.argv[3] === 'users' || process.argv[3] === 'u') {
     Model = User;
     data = JSON.parse(
-        fs.readFileSync(`${__dirname}/dev-data/data/users-simple.json`, 'utf-8')
+        fs.readFileSync(
+            `${__dirname}/dev-data/data/myusers-simple.json`,
+            'utf-8'
+        )
+    );
+    // data = JSON.parse(
+    //     fs.readFileSync(`${__dirname}/dev-data/data/users.json`, 'utf-8')
+    // );
+} else if (process.argv[3] === 'reviews' || process.argv[3] === 'r') {
+    Model = Review;
+    data = JSON.parse(
+        fs.readFileSync(`${__dirname}/dev-data/data/reviews.json`, 'utf-8')
     );
 } else {
     console.log('Invalid Command!');
@@ -56,7 +74,7 @@ if (process.argv[3] === 'tours' || process.argv[3] === 't') {
 const deleteAllData = async Mod => {
     try {
         await Mod.deleteMany();
-        console.log('All Data Successfully Deleted!');
+        console.log(`All Data Successfully Deleted!`);
     } catch (err) {
         console.log('error 🔥', err);
     }
@@ -66,7 +84,7 @@ const deleteAllData = async Mod => {
 const importAllData = async Mod => {
     try {
         await Mod.create(data);
-        console.log('All Data Successfully Inserted!');
+        console.log(`All Data Successfully Inserted!`);
     } catch (err) {
         console.log('error 🔥 ', err);
     }

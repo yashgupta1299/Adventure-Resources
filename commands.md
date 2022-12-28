@@ -67,7 +67,7 @@
 <!--! import and delete all data in a database [custom command] -->
 
 1. A = import or delete
-   B = tours or users
+   B = tours or users or reviews
    C = local or cloud
    note: choosing first character also work
    "node dbconfig.js <%A%> <%B%> <%C%>"

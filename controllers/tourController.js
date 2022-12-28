@@ -87,7 +87,7 @@ exports.getmonthlyPlan = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllTour = catchAsync(async (req, res, next) => {
-    console.log(req.query);
+    // console.log(req.query);
     const features = new APIfeatures(Tour.find(), req.query)
         .filtering()
         .sort()
@@ -121,11 +121,12 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
     const tour = await Tour.findById(req.params.id);
+    // const tour = await Tour.findById(req.params.id).populate('reviews');
     // const tour = await Tour.findOne({ _id: req.params.id });
     if (!tour) {
         // console.log('here');
         return next(
-            new AppError(`Tour with ID: ${req.params.id} not exists`, 404)
+            new AppError(`Tour with ID: ${req.params.id} do not exists`, 404)
         );
     }
     res.status(200).json({
