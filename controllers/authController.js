@@ -115,7 +115,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.restricedTo = (...roles) => {
     return (req, res, next) => {
-        // roles is an array ['admin','lead-guide']
+        // say  roles is an array ['admin','lead-guide']
         if (!roles.includes(req.user.role)) {
             return next(
                 new AppError(

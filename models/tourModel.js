@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModel');
 // const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
@@ -84,7 +85,36 @@ const tourSchema = new mongoose.Schema(
         secretTour: {
             type: Boolean,
             default: false
-        }
+        },
+        startLocation: {
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point']
+            },
+            coordinates: [Number],
+            address: String,
+            description: String
+        },
+        locations: [
+            {
+                type: {
+                    type: String,
+                    default: 'Point',
+                    enum: ['Point']
+                },
+                coordinates: [Number],
+                address: String,
+                description: String,
+                day: Number
+            }
+        ],
+        guides: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'User'
+            }
+        ]
     },
     {
         toJSON: { virtuals: true },
@@ -101,6 +131,13 @@ tourSchema.pre('save', function(next) {
     this.slug = slugify(this.name, { lower: true });
     next();
 });
+
+// tourSchema.pre('save', async function(next) {
+//     const guidePromises = this.guides.map(async id => await User.findById(id));
+//     this.guides = await Promise.all(guidePromises);
+//     next();
+// });
+
 // tourSchema.pre('save', function(next) {
 //     console.log('will save document');
 //     next();
@@ -113,17 +150,28 @@ tourSchema.pre('save', function(next) {
 // Query middleware
 tourSchema.pre(/^find/, function(next) {
     this.find({ secretTour: { $ne: true } });
-    this.start = Date.now();
+    // this.start = Date.now();
     next();
 });
 
-tourSchema.post(/^find/, function(doc, next) {
-    // console.log(`query takes ${Date.now() - this.start}ms.`);
+// to fill all reference field
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'guides',
+        select: '-__v -passwordChangedAt'
+    });
     next();
 });
+
+// tourSchema.post(/^find/, function(doc, next) {
+// console.log(`query takes ${Date.now() - this.start}ms.`);
+//     next();
+// });
 
 // Aggregation middleware
 tourSchema.pre('aggregate', function(next) {
+    // we just want to add another stage in the begining of our pipelene array
+    // to exclude secret tour
     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
     next();
 });

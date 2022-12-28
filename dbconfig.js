@@ -40,7 +40,8 @@ let Model;
 if (process.argv[3] === 'tours' || process.argv[3] === 't') {
     Model = Tour;
     data = JSON.parse(
-        fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
+        // fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
+        fs.readFileSync(`${__dirname}/dev-data/data/tours.json`, 'utf-8')
     );
 } else if (process.argv[3] === 'users' || process.argv[3] === 'u') {
     Model = User;
