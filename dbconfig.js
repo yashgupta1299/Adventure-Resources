@@ -13,6 +13,7 @@ const Review = require('./models/reviewModel');
 
 dotenv.config({ path: './config.env' });
 // console.log(process.argv);
+
 let DB;
 if (process.argv[4] === 'local' || process.argv[4] === 'l') {
     DB = process.env.DATABASE_LOCAL;

@@ -46,6 +46,9 @@ const handleDuplicateFieldsDB = err => {
     if (err.keyValue.email) {
         message = `field value, email: ${err.keyValue.email}, Already present please use another value!`;
     }
+    if (err.keyValue.tour && err.keyValue.user) {
+        message = `Review already created, if you want to create another one then please delete first one!`;
+    }
     return new AppError(message, 400);
 };
 const handleValidationErrorDB = err => {

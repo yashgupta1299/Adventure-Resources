@@ -7,13 +7,30 @@ const authController = require('./../controllers/authController');
 // the child’s value take precedence.
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protect);
+
 router
     .route('/')
     .get(controller.getAllReview)
     .post(
-        authController.protect,
-        authController.restricedTo('user'),
+        // authController.restricedTo('user'),
+        authController.restricedTo('user', 'admin'),
+        controller.extractUserIdAndTourId,
         controller.createNewReview
+    );
+
+router
+    .route('/:id')
+    .get(controller.getReview)
+    .patch(
+        authController.restricedTo('user', 'admin'),
+        // will restrict to creater only
+        controller.updateReview
+    )
+    .delete(
+        // will restrict to creater only
+        authController.restricedTo('user', 'admin'),
+        controller.deleteReview
     );
 
 module.exports = router;

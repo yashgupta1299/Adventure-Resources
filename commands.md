@@ -66,7 +66,13 @@
 
 <!--! import and delete all data in a database [custom command] -->
 
-1. A = import or delete
+1. firt comment pre query of hash password in "/models/userModel"
+   A = import or delete
+   B = local or cloud
+   note: choosing first character also work
+   run: "node dbReset.js <%A%> <%B%>"
+
+2. A = import or delete
    B = tours or users or reviews
    C = local or cloud
    note: choosing first character also work
