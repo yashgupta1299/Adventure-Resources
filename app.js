@@ -23,7 +23,21 @@ app.set('views', path.join(__dirname, '/views'));
 app.use(express.static(path.join(__dirname, '/public')));
 
 // set security http headers
-app.use(helmet()); // helmet() will return a function which sits here
+// app.use(helmet()); // helmet() will return a function which sits here
+app.use(
+    helmet({
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: {
+            allowOrigins: ['*']
+        },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ['*'],
+                scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"]
+            }
+        }
+    })
+);
 
 // development logging
 if (process.env.NODE_ENV === 'development') {
