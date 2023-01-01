@@ -624,7 +624,6 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
 var _alerts = require("./alerts");
 const login = async (email, password)=>{
-    console.log(email, password);
     try {
         const res = await axios({
             method: "POST",
