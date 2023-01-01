@@ -66,6 +66,18 @@ exports.login = catchAsync(async (req, res, next) => {
     createSendjwt(user, 201, res);
 });
 
+exports.logout = (req, res) => {
+    // altered jwt so that verification failed when server reloads it
+    // time expire sso that browser delete the cookie from itself
+    res.cookie('jwt', 'logged-out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.status(200).json({
+        status: 'success'
+    });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
     //1. Check weather token is present or not and extract it if present
     let token;
@@ -118,36 +130,39 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
     //1. Check weather token is present or not and extract it if present
-    let token;
-    if (req.cookies && req.cookies.jwt) {
-        token = req.cookies.jwt;
-    }
+    try {
+        let token;
+        if (req.cookies && req.cookies.jwt) {
+            token = req.cookies.jwt;
+        }
 
-    if (!token) {
+        if (!token) {
+            return next();
+        }
+
+        //2. verify the token and if it failed promise is rejected
+        const decoded = await util.promisify(jwt.verify)(
+            token,
+            process.env.JWT_SECRET_KEY
+        );
+
+        //3. check if user still exists in our database
+        const dbUser = await User.findById(decoded.id);
+        if (!dbUser) {
+            return next();
+        }
+
+        //4. check if password is changed or not after the issue of token
+        if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
+            return next();
+        }
+
+        // storing for using in upcoming middlewares in pug files user is
+        // now a local variable for them
+        res.locals.user = dbUser;
+    } catch (err) {
         return next();
     }
-
-    //2. verify the token and if it failed promise is rejected
-    const decoded = await util.promisify(jwt.verify)(
-        token,
-        process.env.JWT_SECRET_KEY
-    );
-
-    //3. check if user still exists in our database
-    const dbUser = await User.findById(decoded.id);
-    if (!dbUser) {
-        return next();
-    }
-
-    //4. check if password is changed or not after the issue of token
-    if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
-        return next();
-    }
-
-    // storing for using in upcoming middlewares in pug files user is
-    // now a local variable for them
-    res.locals.user = dbUser;
-
     // all safe Grant Access
     next();
 });

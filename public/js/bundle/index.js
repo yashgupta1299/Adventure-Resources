@@ -537,6 +537,7 @@ var _login = require("./login");
 // DOM Elements
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form");
+const logoutBtn = document.querySelector(".nav__el--logout");
 // DELEGATION
 if (mapBox) {
     const locations = JSON.parse(document.getElementById("map").dataset.locations);
@@ -548,6 +549,7 @@ if (loginForm) loginForm.addEventListener("submit", (event)=>{
     const password = document.getElementById("password").value;
     (0, _login.login)(email, password);
 });
+if (logoutBtn) logoutBtn.addEventListener("click", (0, _login.logout));
 
 },{"./mapbox":"8T0Yp","./login":"gnw7Z"}],"8T0Yp":[function(require,module,exports) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -622,6 +624,7 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
+parcelHelpers.export(exports, "logout", ()=>logout);
 var _alerts = require("./alerts");
 const login = async (email, password)=>{
     try {
@@ -641,6 +644,20 @@ const login = async (email, password)=>{
         }
     } catch (err) {
         (0, _alerts.showAlert)("error", err.response.data.message);
+    }
+};
+const logout = async ()=>{
+    try {
+        const res = await axios({
+            method: "GET",
+            url: "http://127.0.0.1:3000/api/v1/users/logout"
+        });
+        if (res.data.status === "success") {
+            console.log(res.response);
+            location.reload(true);
+        }
+    } catch (err) {
+        (0, _alerts.showAlert)("error", "Error in logging out please try again!");
     }
 };
 
