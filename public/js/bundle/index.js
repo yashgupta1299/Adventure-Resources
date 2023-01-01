@@ -710,7 +710,8 @@ const showAlert = (type, msg)=>{
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"34I2M"}],"6FFMN":[function(require,module,exports) {
-/* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+/* eslint-disable */ // import axios from 'axios';
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
 var _alerts = require("./alerts");
