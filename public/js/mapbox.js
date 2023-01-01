@@ -1,8 +1,5 @@
 /* eslint-disable */
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
-// console.log(locations);
-
-const displayMap = locations => {
+export const displayMap = locations => {
     mapboxgl.accessToken =
         'pk.eyJ1IjoieWFzaGd1cHRhMTExMSIsImEiOiJjbGNjZzB2ZDUyazhwM3d0OHF0ZnhtcmhkIn0.S93xXiysZdlPuelZHk1Wdw';
 
@@ -10,9 +7,6 @@ const displayMap = locations => {
         container: 'map',
         style: 'mapbox://styles/yashgupta1111/clcci2fmq002p14p2o4z1kvxy',
         scrollZoom: false
-        // center: [-118.113491, 34.111745],
-        // zoom: 10,
-        // interactive: false
     });
 
     const bounds = new mapboxgl.LngLatBounds();
@@ -51,5 +45,3 @@ const displayMap = locations => {
         }
     });
 };
-
-displayMap(locations);
