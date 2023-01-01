@@ -1,5 +1,5 @@
 /* eslint-disable */
-import '@babel/polyfill';
+// import '@babel/polyfill';
 import { displayMap } from './mapbox';
 import { login } from './login';
 
@@ -14,6 +14,7 @@ const loginForm = document.querySelector('.form');
 //     );
 //     displayMap(locations);
 // }
+
 if (loginForm) {
     loginForm.addEventListener('submit', event => {
         event.preventDefault();

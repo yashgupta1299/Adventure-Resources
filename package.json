@@ -2,13 +2,20 @@
     "name": "natour",
     "version": "1.0.0",
     "description": "learning node, express and mongoDB",
+    "browserslist": "> 0.5%, last 2 versions, not dead",
+    "targets": {
+        "main": false,
+        "default": {
+            "includeNodeModules": false
+        }
+    },
     "main": "app.js",
     "scripts": {
         "start": "nodemon server.js",
         "start:prod": "NODE_ENV=production nodemon server.js",
         "debug": "ndb srver.js",
-        "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
-        "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+        "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundle --public-url js",
+        "build:js": "parcel watch ./public/js/index.js --dist-dir ./public/js --out-file bundle.js --public-url /js"
     },
     "author": "yashGupta",
     "license": "ISC",
@@ -43,6 +50,7 @@
         "eslint-plugin-node": "^8.0.1",
         "eslint-plugin-prettier": "^3.0.1",
         "eslint-plugin-react": "^7.12.4",
+        "parcel": "^2.8.2",
         "prettier": "^1.17.0"
     },
     "engines": {

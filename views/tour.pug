@@ -3,7 +3,7 @@ include _reviewCard
 
 block append head
     link(href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet")
-    script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
+    //- script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
 
 mixin overviewBox(label, text, icon)
     .overview-box__detail
@@ -86,6 +86,6 @@ block content
                 p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
                 button.btn.btn--green.span-all-rows Book tour now!
 
-//- block append js 
-    //- script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
+block append js 
+    script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
     script(src='/js/mapbox2.js')
