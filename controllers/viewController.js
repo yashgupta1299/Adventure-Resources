@@ -1,3 +1,4 @@
+const AppError = require('../utils/AppError');
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/catchAsync');
 
@@ -12,7 +13,7 @@ exports.getOverview = catchAsync(async (req, res) => {
         tours
     });
 });
-exports.getTour = catchAsync(async (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
     // get the data, for requested tour (including reviews and guides)
     // even after adding hash at the end of slug it gives same name as before
     // console.log(req.params.slug);
@@ -20,6 +21,11 @@ exports.getTour = catchAsync(async (req, res) => {
         path: 'reviews',
         field: 'review rating user'
     });
+
+    // if tour not found
+    if (!tour) {
+        return next(new AppError('There is no tour with that name!', 404));
+    }
 
     //2 build template
     //3 Render that template using tour data

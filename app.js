@@ -88,7 +88,7 @@ app.use(
 
 // test middleware
 app.use((req, res, next) => {
-    console.log(req.cookies);
+    // console.log(req.cookies);
     req.requestTime = new Date().toISOString();
     next();
 });
