@@ -535,15 +535,13 @@ function hmrAcceptRun(bundle, id) {
 var _mapbox = require("./mapbox");
 var _login = require("./login");
 // DOM Elements
-// const mapBox = document.getElementById('map');
+const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form");
 // DELEGATION
-// if (mapBox) {
-//     const locations = JSON.parse(
-//         document.getElementById('map').dataset.locations
-//     );
-//     displayMap(locations);
-// }
+if (mapBox) {
+    const locations = JSON.parse(document.getElementById("map").dataset.locations);
+    (0, _mapbox.displayMap)(locations);
+}
 if (loginForm) loginForm.addEventListener("submit", (event)=>{
     event.preventDefault();
     const email = document.getElementById("email").value;
