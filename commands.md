@@ -81,4 +81,7 @@
 <!--! some commands -->
 
 1. delete last commit reset head to its preveios state
-   git reset --hard HEAD~1
+   "git reset --hard HEAD~1"
+
+2. Remove directory from Git but NOT local
+   "git rm -r --cached myFolder"
