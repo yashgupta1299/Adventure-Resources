@@ -30,8 +30,13 @@ export const logout = async () => {
             url: 'http://127.0.0.1:3000/api/v1/users/logout'
         });
         if (res.data.status === 'success') {
-            console.log(res.response);
-            location.reload(true);
+            // location.reload(true);
+
+            // my
+            showAlert('success', 'Logged out successfully!');
+            window.setTimeout(() => {
+                location.assign('/');
+            }, 1500);
         }
     } catch (err) {
         showAlert('error', 'Error in logging out please try again!');

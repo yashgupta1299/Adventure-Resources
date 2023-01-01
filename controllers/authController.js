@@ -124,6 +124,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     // storing for using in upcoming middlewares
     req.user = dbUser;
 
+    // storing for using in upcoming middlewares or in pug files. user is
+    // now a local variable for them
+    res.locals.user = dbUser;
+
     // all safe Grant Access
     next();
 });
@@ -157,7 +161,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
             return next();
         }
 
-        // storing for using in upcoming middlewares in pug files user is
+        // storing for using in upcoming middlewares or in pug files. user is
         // now a local variable for them
         res.locals.user = dbUser;
     } catch (err) {

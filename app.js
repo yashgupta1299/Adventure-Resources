@@ -57,6 +57,8 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '10kb' }));
 // cookie parser
 app.use(cookieParser());
+// for parses data submitted through form in url encoded form (in POST method)
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // data sanitization against NoSQL query injection
 // check  req.boby, req.params etc to prevent from

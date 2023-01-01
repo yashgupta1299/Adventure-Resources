@@ -1,5 +1,6 @@
 const AppError = require('../utils/AppError');
 const Tour = require('./../models/tourModel');
+const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 
 exports.getOverview = catchAsync(async (req, res) => {
@@ -40,3 +41,29 @@ exports.getLogInForm = (req, res) => {
         title: 'Log into your account'
     });
 };
+
+exports.getMe = (req, res) => {
+    res.status(200).render('account', {
+        title: 'Your Account'
+    });
+};
+
+exports.updateUserData = catchAsync(async (req, res) => {
+    const updUser = await User.findByIdAndUpdate(
+        req.user.id,
+        {
+            name: req.body.name,
+            email: req.body.email
+        },
+        {
+            new: true,
+            runValidators: true
+        }
+    );
+    // We want that we remain at the same page and information also update and display
+    // Note: if we do not send user then account page render by using old data
+    res.status(200).render('account', {
+        title: 'Your Account',
+        user: updUser
+    });
+});
