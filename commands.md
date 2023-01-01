@@ -77,3 +77,8 @@
    C = local or cloud
    note: choosing first character also work
    "node dbconfig.js <%A%> <%B%> <%C%>"
+
+<!--! some commands -->
+
+1. delete last commit reset head to its preveios state
+   git reset --hard HEAD~1
