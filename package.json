@@ -6,7 +6,7 @@
     "targets": {
         "main": false,
         "default": {
-            "includeNodeModules": true
+            "includeNodeModules": false
         }
     },
     "main": "app.js",
