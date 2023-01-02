@@ -553,14 +553,23 @@ if (loginForm) loginForm.addEventListener("submit", (event)=>{
     (0, _login.login)(email, password);
 });
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _login.logout));
+// without photo
+// if (dataForm) {
+//     dataForm.addEventListener('submit', event => {
+//         event.preventDefault();
+//         const name = document.getElementById('name').value;
+//         const email = document.getElementById('email').value;
+//         updateSettings({ name, email }, 'data');
+//     });
+// }
+// with photo hence need to create form data object no need to change updateSettings
 if (dataForm) dataForm.addEventListener("submit", (event)=>{
     event.preventDefault();
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    (0, _updateSettings.updateSettings)({
-        name,
-        email
-    }, "data");
+    const form = new FormData();
+    form.append("name", document.getElementById("name").value);
+    form.append("email", document.getElementById("email").value);
+    form.append("photo", document.getElementById("photo").files[0]);
+    (0, _updateSettings.updateSettings)(form, "data");
 });
 if (passwordForm) passwordForm.addEventListener("submit", async (event)=>{
     event.preventDefault();

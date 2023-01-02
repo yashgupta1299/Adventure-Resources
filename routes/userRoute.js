@@ -15,7 +15,16 @@ router.use(authController.protect);
 
 router.patch('/updateMyPassword', authController.updateMyPassword);
 router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateMe', userController.updateMe);
+
+// const upload = multer({ dest: `${__dirname}/public/img/users` });
+
+router.patch(
+    '/updateMe',
+    userController.uploadUserPhoto,
+    userController.resizeUserPhoto,
+    userController.updateMe
+);
+
 router.delete('/deleteMe', userController.deleteMe);
 
 // Protect all routes after this middleware to admin only

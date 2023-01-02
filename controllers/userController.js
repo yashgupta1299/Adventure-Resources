@@ -1,8 +1,52 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/AppError');
 const factory = require('./handlerFactory');
 
+// upload image processing
+
+// use below function if we dont want to save photo
+// directly into our filesystem
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         // first argument is error if its there 2nd is destination
+//         cb(null, 'public/img/users');
+//     },
+//     filename: (req, file, cb) => {
+//         const ext = file.mimetype.split('/')[1];
+//         cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//     }
+// });
+// use below function if want to first store file in buffer
+// than process later (here we want to resize it)
+const storage = multer.memoryStorage();
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+        cb(null, true); // null means no error and true means we can proceed
+    } else {
+        cb(new AppError('Not an image. Please upload only image!', 400), false);
+    }
+};
+const upload = multer({ fileFilter, storage });
+exports.resizeUserPhoto = (req, res, next) => {
+    // if no photo is there
+    if (!req.file) {
+        return next();
+    }
+
+    // we store name to use in update me function
+    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+    sharp(req.file.buffer)
+        .resize(500, 500) // it also reduces the file size to great extent say sometimes 1.5 MB to 150 KB
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 }) // after resize again reducing percentage from 1 to 100
+        .toFile(`public/img/users/${req.file.filename}`);
+
+    next();
+};
 const filterObj = (body, ...fieldKeep) => {
     const obj = {};
     Object.keys(body).forEach(el => {
@@ -12,12 +56,7 @@ const filterObj = (body, ...fieldKeep) => {
     });
     return obj;
 };
-
-exports.getMe = (req, res, next) => {
-    req.params.id = req.user.id;
-    next();
-};
-
+exports.uploadUserPhoto = upload.single('photo');
 exports.updateMe = catchAsync(async (req, res, next) => {
     if (req.body.password || req.body.passwordConfirm) {
         return next(
@@ -27,7 +66,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
             )
         );
     }
+    // filtered out unwanted files that are not allowed
     const filteredBody = filterObj(req.body, 'name', 'email');
+    // add image file name additionally if it exists
+    if (req.file) {
+        filteredBody.photo = req.file.filename;
+    }
+
     // note here we are not using because then either all validator run
     // or we can turn all off hence we are using particular function
     // so that only their validaror will run
@@ -65,7 +110,14 @@ exports.createNewUser = (req, res) => {
 };
 
 exports.getAllUser = factory.getAll(User);
+
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
 exports.getUser = factory.getOne(User);
+
 //Do not use for update password
 exports.updateUser = factory.updateOne(User);
+
 exports.deleteUser = factory.deleteOne(User);
