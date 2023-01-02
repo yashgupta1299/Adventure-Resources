@@ -1,9 +1,13 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const fs = require('fs');
+const { promisify } = require('util');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/AppError');
 const factory = require('./handlerFactory');
+
+const unlinkAsync = promisify(fs.unlink);
 
 // upload image processing
 
@@ -84,6 +88,16 @@ exports.updateMe = catchAsync(async (req, res, next) => {
             runValidators: true
         }
     );
+
+    // remove old image from file system only if new exists and it is not default one
+    if (req.file && req.user.photo !== 'default.jpg') {
+        // Delete the file like normal
+        try {
+            await unlinkAsync(`public/img/users/${req.user.photo}`);
+        } catch (err) {
+            console.log(err);
+        }
+    }
     res.status(200).json({
         status: 'success',
         data: {

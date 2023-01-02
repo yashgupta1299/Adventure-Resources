@@ -541,6 +541,7 @@ const loginForm = document.querySelector(".form--login");
 const logoutBtn = document.querySelector(".nav__el--logout");
 const dataForm = document.querySelector(".form-user-data");
 const passwordForm = document.querySelector(".form-user-password");
+const imageChange = document.querySelector(".form__upload");
 // DELEGATION
 if (mapBox) {
     const locations = JSON.parse(document.getElementById("map").dataset.locations);
@@ -554,22 +555,36 @@ if (loginForm) loginForm.addEventListener("submit", (event)=>{
 });
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _login.logout));
 // without photo
+if (dataForm) dataForm.addEventListener("submit", (event)=>{
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    (0, _updateSettings.updateSettings)({
+        name,
+        email
+    }, "data");
+});
+// with photo and all data submit at once i.e name email photo
+//hence need to create form data object no need to change updateSettings
 // if (dataForm) {
 //     dataForm.addEventListener('submit', event => {
 //         event.preventDefault();
-//         const name = document.getElementById('name').value;
-//         const email = document.getElementById('email').value;
-//         updateSettings({ name, email }, 'data');
+//         const form = new FormData();
+//         form.append('name', document.getElementById('name').value);
+//         form.append('email', document.getElementById('email').value);
+//         form.append('photo', document.getElementById('photo').files[0]);
+//         updateSettings(form, 'data');
 //     });
-// }
-// with photo hence need to create form data object no need to change updateSettings
-if (dataForm) dataForm.addEventListener("submit", (event)=>{
+// };
+if (imageChange) imageChange.addEventListener("change", async (event)=>{
     event.preventDefault();
     const form = new FormData();
-    form.append("name", document.getElementById("name").value);
-    form.append("email", document.getElementById("email").value);
     form.append("photo", document.getElementById("photo").files[0]);
-    (0, _updateSettings.updateSettings)(form, "data");
+    const newUserPhotoName = await (0, _updateSettings.updateSettings)(form, "photo");
+    if (newUserPhotoName) {
+        document.querySelector(".nav__user-img").setAttribute("src", `/img/users/${newUserPhotoName}`);
+        document.querySelector(".form__user-photo").setAttribute("src", `/img/users/${newUserPhotoName}`);
+    }
 });
 if (passwordForm) passwordForm.addEventListener("submit", async (event)=>{
     event.preventDefault();
@@ -725,17 +740,22 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
 var _alerts = require("./alerts");
 const updateSettings = async (data, type)=>{
+    let res;
     try {
         const url = type === "password" ? "http://127.0.0.1:3000/api/v1/users/updateMyPassword" : "http://127.0.0.1:3000/api/v1/users/updateMe";
-        console.log(url);
-        const res = await axios({
+        res = await axios({
             method: "PATCH",
             url,
             data
         });
-        if (res.data.status === "success") (0, _alerts.showAlert)("success", `${type.toUpperCase()} updated successfully!`);
+        if (res.data.status === "success") {
+            (0, _alerts.showAlert)("success", `${type.toUpperCase()} updated successfully!`);
+            if (type === "photo") // note return also goes to catch block hence handle that case also
+            return res.data.data.updatedUser.photo;
+        }
     } catch (err) {
-        (0, _alerts.showAlert)("error", err.response.data.message);
+        if (type === "photo" && res.data.status === "success") return;
+        (0, _alerts.showAlert)("errror", err.response.data.message);
     }
 };
 
