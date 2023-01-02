@@ -34,7 +34,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 const upload = multer({ fileFilter, storage });
-exports.resizeUserPhoto = (req, res, next) => {
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
     // if no photo is there
     if (!req.file) {
         return next();
@@ -43,14 +43,14 @@ exports.resizeUserPhoto = (req, res, next) => {
     // we store name to use in update me function
     req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
-    sharp(req.file.buffer)
+    await sharp(req.file.buffer)
         .resize(500, 500) // it also reduces the file size to great extent say sometimes 1.5 MB to 150 KB
         .toFormat('jpeg')
         .jpeg({ quality: 90 }) // after resize again reducing percentage from 1 to 100
         .toFile(`public/img/users/${req.file.filename}`);
 
     next();
-};
+});
 const filterObj = (body, ...fieldKeep) => {
     const obj = {};
     Object.keys(body).forEach(el => {
