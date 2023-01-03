@@ -34,6 +34,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 const upload = multer({ fileFilter, storage });
+exports.uploadUserPhoto = upload.single('photo');
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
     // if no photo is there
     if (!req.file) {
@@ -60,7 +61,6 @@ const filterObj = (body, ...fieldKeep) => {
     });
     return obj;
 };
-exports.uploadUserPhoto = upload.single('photo');
 exports.updateMe = catchAsync(async (req, res, next) => {
     if (req.body.password || req.body.passwordConfirm) {
         return next(
