@@ -4,7 +4,7 @@ const util = require('util');
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/AppError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 const jwtSignToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -42,7 +42,12 @@ exports.signup = catchAsync(async (req, res, next) => {
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm
     });
+    // email send for uploading user photo
+    const userNE = { name: newUser.name, email: newUser.email };
+    const meSectionUrl = `${req.protocol}://${req.get('host')}/me`;
+    await new Email(userNE, meSectionUrl).sendWelcome();
 
+    // send jwt
     createSendjwt(newUser, 201, res);
 });
 
@@ -300,22 +305,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     });
 
     // 3. send it to users email
-
-    // generating resetURL
-    // req.get('host') is "127.0.0.1:3000"
-    // req.protocol is "http"
-    const resetURL = `${req.protocol}://${req.get(
-        'host'
-    )}/api/v1/users/resetPassword/${resetToken}`;
-
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
     try {
-        await sendEmail({
-            email: req.body.email,
-            subject: 'Your password reset token (valid for 10 min)',
-            message
-        });
+        // generating resetURL
+        // req.get('host') is "127.0.0.1:3000"
+        // req.protocol is "http"
+        const userNE = { name: dbUser.name, email: dbUser.email };
+        const resetURL = `${req.protocol}://${req.get(
+            'host'
+        )}/api/v1/users/resetPassword/${resetToken}`;
+        await new Email(userNE, resetURL).sendPasswordReset();
+
         res.status(200).json({
             status: 'success',
             message: 'Token sent to email'
