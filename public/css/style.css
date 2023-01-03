@@ -750,6 +750,16 @@ body {
   -ms-flex-align: center;
   align-items: center;
 }
+.cta__content_rev {
+  /* display: grid; */
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr auto;
+  grid-gap: 0.7rem;
+  grid-auto-flow: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
 .cta__text {
   font-size: 1.9rem;
   font-weight: 400;
@@ -1262,6 +1272,69 @@ body {
 .form__input::-webkit-input-placeholder {
   color: #bbb;
 }
+
+.form__input_rev {
+  display: block;
+  font-family: inherit;
+  font-size: 1.5rem;
+  color: inherit;
+  padding: 1.25rem 1.75rem;
+  border: none;
+  width: 100%;
+  background-color: #fff;
+  background-color: #f2f2f2;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /* Pseudo element (a visible thing that isn't really in the DOM).
+      Also needs -ms- */
+}
+.form__input_rev:focus {
+  outline: none;
+  border-bottom: 3px solid #55c57a;
+}
+.form__input_rev:focus:invalid {
+  border-bottom: 3px solid #ff7730;
+}
+.form__input_rev::-webkit-input-placeholder {
+  color: #bbb;
+}
+
+.form__input_rat {
+  display: block;
+  font-family: inherit;
+  font-size: 1.5rem;
+  color: inherit;
+  padding: 1.25rem 1.75rem;
+  border: none;
+  width: 10%;
+  background-color: #fff;
+  background-color: #f2f2f2;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /* Pseudo element (a visible thing that isn't really in the DOM).
+      Also needs -ms- */
+}
+.form__input_rat:focus {
+  outline: none;
+  border-bottom: 3px solid #55c57a;
+}
+.form__input_rat:focus:invalid {
+  border-bottom: 3px solid #ff7730;
+}
+.form__input_rat::-webkit-input-placeholder {
+  color: #bbb;
+}
+
 .form__input_re {
   display: block;
   font-family: inherit;

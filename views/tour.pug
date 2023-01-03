@@ -85,6 +85,22 @@ block content
                 h2.heading-secondary What are you waiting for?
                 p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
                 button.btn.btn--green.span-all-rows Book tour now!
+                        
+    //- form.form.form-user-data
+    form.section-cta
+        .cta
+            .cta__content_rev
+                .form__group
+                    label.form__label(for='name') Review
+                    input#name.form__input_rev(type='textarea',minlength="60", value=`${user.name}`, required, name='name')
+                
+                .form__group
+                    label.form__label(for='name') Rating  
+                            +reviewCard2(tour.reviews[0])
+                    input#name.form__input_rat(type='number', value=`5`, required, name='name', min=1, max=5)
+
+                .form__group.right
+                    button.btn.btn--small.btn--green Save
 
 block append js 
     script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
