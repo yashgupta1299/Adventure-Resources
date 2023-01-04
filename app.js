@@ -7,6 +7,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
@@ -88,6 +89,9 @@ app.use(
         ]
     })
 );
+
+// use to compress text which is send to the client
+app.use(compression());
 
 // test middleware
 app.use((req, res, next) => {
