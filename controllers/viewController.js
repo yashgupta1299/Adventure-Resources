@@ -1,6 +1,7 @@
 const AppError = require('../utils/AppError');
 const Tour = require('./../models/tourModel');
 const User = require('./../models/userModel');
+const Booking = require('./../models/bookingModel');
 const catchAsync = require('./../utils/catchAsync');
 
 exports.getOverview = catchAsync(async (req, res) => {
@@ -14,6 +15,26 @@ exports.getOverview = catchAsync(async (req, res) => {
         tours
     });
 });
+
+exports.getMyTours = catchAsync(async (req, res, next) => {
+    // get booking of all tours booked by a user
+    const myBookings = await Booking.find({ user: req.user.id });
+
+    // get ids of all tours booked by a user
+    const Ids = myBookings.map(doc => {
+        return doc.tour.id;
+    });
+
+    // get all tour docs booked by a user
+    const tours = await Tour.find({ _id: { $in: Ids } });
+
+    //render my booking page (just like overview)
+    res.status(200).render('overview', {
+        title: 'My Bookings',
+        tours
+    });
+});
+
 exports.getTour = catchAsync(async (req, res, next) => {
     // get the data, for requested tour (including reviews and guides)
     // even after adding hash at the end of slug it gives same name as before
