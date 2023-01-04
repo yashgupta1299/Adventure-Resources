@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
+const bookingRouter = require('./routes/bookingRoute');
 const viewRouter = require('./routes/viewRoute');
 const AppError = require('./utils/AppError');
 const globalErrorController = require('./controllers/globalErrorController');
@@ -100,6 +101,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 // error generator for all other routes
 // for all methods hence all is used
