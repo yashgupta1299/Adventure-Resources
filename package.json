@@ -15,7 +15,7 @@
         "start:prod": "NODE_ENV=production nodemon server.js",
         "debug": "ndb srver.js",
         "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundle --public-url js",
-        "build:js": "parcel watch ./public/js/index.js --dist-dir ./public/js --out-file bundle.js --public-url /js"
+        "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundle --public-url js"
     },
     "author": "yashGupta",
     "license": "ISC",
