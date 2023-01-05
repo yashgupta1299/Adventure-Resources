@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Booking = require('../models/bookingModel');
 const Tour = require('./../models/tourModel');
-// const User = require('./../models/userModel');
+const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
 // const AppError = require('../utils/AppError');
@@ -65,15 +65,14 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 // });
 const createBookingCheckout = async session => {
     console.log(session);
-    // const tourId = session.client_reference_id;
-    // const userId = (await User.findOne({ email: session.customer_email })).id;
-    // const price = session.display_items[0].amount / 100;
-    // await Booking.create({ tourId, userId, price });
+    const tourId = session.client_reference_id;
+    const userId = (await User.findOne({ email: session.email })).id;
+    const price = session.amount_total;
+    await Booking.create({ tourId, userId, price });
 };
 
 exports.webhookCheckout = catchAsync(async (req, res, next) => {
     const signature = req.headers['stripe-signature'];
-    console.log(76, signature);
     let event;
     try {
         event = stripe.webhooks.constructEvent(
@@ -81,15 +80,11 @@ exports.webhookCheckout = catchAsync(async (req, res, next) => {
             signature,
             process.env.STRIPE_WEBHOOK_SECRET
         );
-        console.log(84, event);
     } catch (err) {
-        console.log(86, err);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    console.log(90);
     if (event.type === 'checkout.session.completed') {
-        console.log(92);
         createBookingCheckout(event.data.object);
         res.status(200).json({
             status: 'success'

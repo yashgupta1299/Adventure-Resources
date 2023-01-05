@@ -9,7 +9,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
@@ -84,7 +83,7 @@ app.use('/api', limiter);
 // for stripe we want req.body in raw process hence we impliment that route before any parser
 app.post(
     '/webhook-checkout',
-    bodyParser.raw({ type: 'application/json' }),
+    express.raw({ type: 'application/json' }),
     bookingController.webhookCheckout
 );
 

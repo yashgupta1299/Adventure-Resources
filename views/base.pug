@@ -9,7 +9,7 @@ html
             link(rel="shortcut icon", href="/img/favicon.png", type="image/x-icon")
             title Natours | #{title}
 
-    body 
+    body(data-alert=`${alert ? alert : ''}`)
         // HEADER
         include _header
 
@@ -21,6 +21,6 @@ html
         include _footer
 
         block js
-        script(src="https://js.stripe.com/v3/")
+        //- script(src="https://js.stripe.com/v3/")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js")
         script(type="module" src="/js/bundle/index.js") 

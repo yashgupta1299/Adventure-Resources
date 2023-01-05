@@ -4,6 +4,7 @@ import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
+import { showAlert } from './alerts';
 
 // DOM Elements
 const mapBox = document.getElementById('map');
@@ -13,6 +14,7 @@ const dataForm = document.querySelector('.form-user-data');
 const passwordForm = document.querySelector('.form-user-password');
 const imageChange = document.querySelector('.form__upload');
 const bookTourBTN = document.getElementById('book-tour');
+const headAlertDataset = document.querySelector('body').dataset.alert;
 
 // DELEGATION
 if (mapBox) {
@@ -110,4 +112,8 @@ if (bookTourBTN) {
         const { tourId } = event.target.dataset; // destructuring way
         bookTour(tourId);
     });
+}
+
+if (headAlertDataset) {
+    showAlert('success', headAlertDataset, 20);
 }
