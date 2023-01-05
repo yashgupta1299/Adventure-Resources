@@ -15,6 +15,7 @@ const reviewRouter = require('./routes/reviewRoute');
 const bookingRouter = require('./routes/bookingRoute');
 const viewRouter = require('./routes/viewRoute');
 const AppError = require('./utils/AppError');
+const bookingController = require('./controllers/bookingController');
 const globalErrorController = require('./controllers/globalErrorController');
 
 const app = express();
@@ -77,6 +78,13 @@ const limiter = rateLimit({
     message: 'Too many requests from this IP, please try again in an hour!'
 });
 app.use('/api', limiter);
+
+// for stripe we want req.body in raw process hence we impliment that route before any parser
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    bookingController.webhookCheckout
+);
 
 // body parser reading data from body into req.body and also limit the body size
 app.use(express.json({ limit: '10kb' }));
