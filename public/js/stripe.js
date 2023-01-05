@@ -14,14 +14,14 @@ export const bookTour = async tourId => {
             `/api/v1/bookings/checkout-session/${tourId}`
         );
 
-        // await stripe.redirectToCheckout({
-        // sessionId: response.data.session.id
-        // });
+        await stripe.redirectToCheckout({
+            sessionId: response.data.session.id
+        });
 
         // we can also use directly url as it is given in response no need of stripe.redirecto function
-        window.setTimeout(() => {
-            location.assign(response.data.session.url);
-        }, 1000);
+        // window.setTimeout(() => {
+        //     location.assign(response.data.session.url);
+        // }, 1000);
     } catch (err) {
         console.log(err);
         showAlert('error', err);
