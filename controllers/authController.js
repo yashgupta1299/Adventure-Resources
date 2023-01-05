@@ -12,19 +12,17 @@ const jwtSignToken = id => {
     });
 };
 
-const cookieOptions = {
-    expires: new Date(
-        Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true // cannot be changed by browser
-    //secure: true // connection can be done only over https
-};
-if (process.env.NODE_ENV === 'production') {
-    cookieOptions.secure = true;
-}
-const createSendjwt = (user, statusCode, res) => {
+const createSendjwt = (user, statusCode, req, res) => {
     const token = jwtSignToken(user.id);
-    res.cookie('jwt', token, cookieOptions);
+    res.cookie('jwt', token, {
+        expires: new Date(
+            Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+        ),
+        // cannot be changed by browser
+        httpOnly: true,
+        // connection can be done only over https
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+    });
     user.password = undefined;
     res.status(statusCode).json({
         status: 'success',
@@ -48,7 +46,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     await new Email(userNE, meSectionUrl).sendWelcome();
 
     // send jwt
-    createSendjwt(newUser, 201, res);
+    createSendjwt(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -68,7 +66,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // everything is ok
-    createSendjwt(user, 201, res);
+    createSendjwt(user, 201, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -274,7 +272,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // send the jwt token
-    createSendjwt(dbUser, 201, res);
+    createSendjwt(dbUser, 201,req, res);
 });
 */
 
@@ -362,7 +360,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // send the jwt token
-    createSendjwt(dbUser, 201, res);
+    createSendjwt(dbUser, 201, req, res);
 });
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
@@ -386,5 +384,5 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
     await dbUser.save();
 
     // 4 log user in, send jwt
-    createSendjwt(dbUser, 201, res);
+    createSendjwt(dbUser, 201, req, res);
 });

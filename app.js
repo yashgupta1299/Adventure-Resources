@@ -8,6 +8,7 @@ const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
@@ -19,8 +20,30 @@ const globalErrorController = require('./controllers/globalErrorController');
 const app = express();
 // Global Middlewares
 
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
+
+// Implement CORS
+// Access-Control-Allow-Origin to *
+// not we can add custom origin or custom routes for this action
+// as it is a normal middleware which basically set headers
+app.use(cors());
+// say our api is at api.natours.com and front-end at natours.com
+// then we can allow only custom origin
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+// A CORS preflight request is a CORS request that checks to see if the
+//CORS protocol is understood and a server is aware using specific methods and headers.
+// it is basically similar thing but started by browser in case of some complex requests
+// like put, patch, delete, or request having cookies that weather we allow that origin or not
+// options is just a method like get, post we are just setting headers for preflight request which
+// goes to browser again
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
 
 // serving static files
 app.use(express.static(path.join(__dirname, '/public')));
