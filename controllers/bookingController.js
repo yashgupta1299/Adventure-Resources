@@ -75,13 +75,13 @@ exports.webhookCheckout = catchAsync(async (req, res, next) => {
     const signature = req.headers['stripe-signature'];
     let event;
     try {
-        event = stripe.webhooks.constructEvents(
+        event = stripe.webhooks.constructEvent(
             req.body,
             signature,
             process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (err) {
-        res.status(400).send(`webhook error: ${err.message}\n${err}`);
+        res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === 'checkout.session.completed') {
