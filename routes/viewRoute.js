@@ -5,16 +5,16 @@ const bookingController = require('./../controllers/bookingController');
 
 const router = express.Router();
 
-router.get(
-    '/',
-    bookingController.createBookingCheckout, // not safe please comment it out
-    authController.isLoggedIn,
-    viewController.getOverview
-);
+router.get('/', authController.isLoggedIn, viewController.getOverview);
 router.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
 router.get('/login', authController.isLoggedIn, viewController.getLogInForm);
 router.get('/me', authController.protect, viewController.getMe);
-router.get('/my-tours', authController.protect, viewController.getMyTours);
+router.get(
+    '/my-tours',
+    bookingController.createBookingCheckout, // not safe please comment it out
+    authController.protect,
+    viewController.getMyTours
+);
 
 // for form
 router.post(
