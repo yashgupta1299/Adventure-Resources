@@ -20,11 +20,7 @@ const bookingController = require('./controllers/bookingController');
 const globalErrorController = require('./controllers/globalErrorController');
 
 const app = express();
-app.post(
-    '/webhook-checkout',
-    bodyParser.raw({ type: 'application/json' }),
-    bookingController.webhookCheckout
-);
+
 // Global Middlewares
 
 app.enable('trust proxy');
@@ -86,11 +82,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // for stripe we want req.body in raw process hence we impliment that route before any parser
-// app.post(
-//     '/webhook-checkout',
-//     bodyParser.raw({ type: 'application/json' }),
-//     bookingController.webhookCheckout
-// );
+app.post(
+    '/webhook-checkout',
+    bodyParser.raw({ type: 'application/json' }),
+    bookingController.webhookCheckout
+);
 
 // body parser reading data from body into req.body and also limit the body size
 app.use(express.json({ limit: '10kb' }));
