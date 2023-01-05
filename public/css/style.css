@@ -32,7 +32,7 @@ body {
   font-weight: 300;
   font-family: 'Lato', sans-serif;
   color: #777;
-  padding: 3rem;
+  /* padding: 3rem; */
   min-height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1311,7 +1311,7 @@ body {
   color: inherit;
   padding: 1.25rem 1.75rem;
   border: none;
-  width: 10%;
+  width: 25%;
   background-color: #fff;
   background-color: #f2f2f2;
   border-top: 3px solid transparent;
@@ -1425,4 +1425,56 @@ body {
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+
+
+.reviews__tour {
+  text-decoration: none;
+  color: #444;
+  font-size: 2rem;
+}
+
+.review__edit {
+
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: all 0.3s;
+  height: 2rem;
+  width: 6rem;
+  padding: 0.3rem 0;
+  border: unset;
+  background-color: #05b4feab;
+  border-radius: 0.5rem;
+
+}
+
+.review__delete {
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: all 0.3s;
+  height: 2rem;
+  width: 6rem;
+  padding: 0.3rem 0;
+  border: unset;
+  background-color: rgb(255 0 0 / 60%);
+  border-radius: 0.5rem;
+}
+
+
+.reviews__change {
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.review__change:hover {
+  -webkit-transform: translateY(-3px);
+  transform: translateY(-3px);
+  -webkit-box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}
+.review__change:active {
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+  -webkit-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }

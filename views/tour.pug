@@ -91,22 +91,25 @@ block content
 
 
 
-
-    //- form.form.form-user-data
-    form.section-cta
-        .cta
-            .cta__content_rev
+    section.section-cta
+        .login-form
+            h2.heading-secondary.ma-bt-lg Leave a review
+            form.form.review--form(data-ids=`${JSON.stringify( {user: user.id, tour: tour.id })}`)
                 .form__group
-                    label.form__label(for='name') Review
-                    input#name.form__input_rev(type='textarea',minlength="60", value=`${'myReview'}`, required, name='name')
-                
+                    label.form__label(for='review') Review
+                    input#review.form__input(type='text' minlength="40", required)
                 .form__group
-                    label.form__label(for='name') Rating  
-                            +reviewCard2(tour.reviews[0])
-                    input#name.form__input_rat(type='number', value=`5`, required, name='name', min=1, max=5)
-
+                    label.form__label(for='rating') Rating
+                        +reviewCard2(tour.reviews[0])
+                    input#rating.form__input_rat(type='number' min='0' max='5' required)
                 .form__group.right
-                    button.btn.btn--small.btn--green Save
+                    button.btn.btn--green Submit review
+
+
+
+
+
+    
 
 block append js 
     script(src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")

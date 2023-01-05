@@ -1,6 +1,7 @@
 const AppError = require('../utils/AppError');
 const Tour = require('./../models/tourModel');
 const User = require('./../models/userModel');
+const Review = require('./../models/reviewModel');
 const Booking = require('./../models/bookingModel');
 const catchAsync = require('./../utils/catchAsync');
 
@@ -62,12 +63,28 @@ exports.getLogInForm = (req, res) => {
         title: 'Log into your account'
     });
 };
+exports.getSignupForm = (req, res) => {
+    res.status(200).render('signup', {
+        title: 'SignUp'
+    });
+};
 
 exports.getMe = (req, res) => {
     res.status(200).render('account', {
         title: 'Your Account'
     });
 };
+exports.getMyreviews = catchAsync(async (req, res) => {
+    const reviews = await Review.find({ user: res.locals.user.id }).populate({
+        path: 'tour',
+        select: 'name slug'
+    });
+
+    res.status(200).render('myReview', {
+        title: 'My reviews',
+        reviews
+    });
+});
 
 exports.updateUserData = catchAsync(async (req, res) => {
     const updUser = await User.findByIdAndUpdate(
