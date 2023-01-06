@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 passport.use(
     new GoogleStrategy(
         {
-            callbackURL: 'http://127.0.0.1:3000/auth/callback',
+            callbackURL: 'https://adventure.up.railway.app/auth/callback',
             clientID: process.env.clientID,
             clientSecret: process.env.clientSecret
         },
