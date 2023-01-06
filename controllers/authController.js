@@ -57,11 +57,13 @@ exports.signup = catchAsync(async (req, res, next) => {
 
     if (dbUser) {
         // change the data
+        dbUser.name = req.body.name;
         dbUser.password = req.body.password;
         dbUser.passwordConfirm = req.body.passwordConfirm;
 
         // here we run save because we want validation of our argument again
         // because of save function validators will run
+        // updating passwordChangedAt variable also in pre 'save'
         await dbUser.save();
 
         // send the jwt token
@@ -196,13 +198,15 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
         return next(new AppError('Email authentication failed', 401));
     }
 
-    //3. check if user exists in our database
-    // const DBemail = await User.findOne({ email: decoded.id });
-    // if (DBemail) {
-    //     return next(
-    //         new AppError('Email is already registered! please log in', 401)
-    //     );
-    // }
+    //4. check if password is changed or not after the issue of token
+    if (User.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
+        return next(
+            new AppError(
+                'Password is recently changed, please log in again:',
+                401
+            )
+        );
+    }
 
     // storing for using in upcoming middlewares
     req.body.email = decoded.id;
