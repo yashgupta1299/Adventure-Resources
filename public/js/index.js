@@ -2,12 +2,21 @@
 // import '@babel/polyfill';
 import { displayMap } from './mapbox';
 import { login, logout, signup } from './login';
-import { updateSettings } from './updateSettings';
+import {
+    updateSettings,
+    reviewCreate,
+    reviewUpdate,
+    reviewDelete
+} from './updateSettings';
 import { bookTour } from './stripe';
 import { showAlert } from './alerts';
 
 // DOM Elements
 const mapBox = document.getElementById('map');
+const reviewFormCreate = document.getElementById('review--form--create');
+const reviewForm = document.getElementById('review--form');
+const reviewDeleteBtns = document.querySelectorAll('.review__delete');
+const reviewChangeBtns = document.querySelectorAll('.review__edit');
 const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
 const logoutBtn = document.querySelector('.nav__el--logout');
@@ -24,6 +33,47 @@ if (mapBox) {
         document.getElementById('map').dataset.locations
     );
     displayMap(locations);
+}
+if (reviewFormCreate) {
+    reviewFormCreate.addEventListener('submit', event => {
+        event.preventDefault();
+        const tourid = document.getElementById('review--form--create').dataset
+            .tourid;
+        const review = document.getElementById('review-create').value;
+        const rating = document.getElementById('rating-create').value;
+        reviewCreate(tourid, review, rating);
+    });
+}
+if (reviewForm) {
+    reviewForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const revid = document.getElementById('review--form').dataset.revid;
+        const review = document.getElementById('review').value;
+        const rating = document.getElementById('rating').value;
+        reviewUpdate(revid, review, rating);
+    });
+}
+if (reviewDeleteBtns) {
+    reviewDeleteBtns.forEach(button => {
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            // `event.target` refers to the button that was clicked
+            const reviewid = event.target.dataset.reviewid;
+            reviewDelete(reviewid);
+        });
+    });
+}
+if (reviewChangeBtns) {
+    reviewChangeBtns.forEach(button => {
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            // `event.target` refers to the button that was clicked
+            const tourid = event.target.dataset.tourid;
+            window.setTimeout(() => {
+                location.assign(tourid);
+            }, 1500);
+        });
+    });
 }
 
 if (loginForm) {

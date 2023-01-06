@@ -50,11 +50,25 @@ exports.getTour = catchAsync(async (req, res, next) => {
         return next(new AppError('There is no tour with that name!', 404));
     }
 
+    // if user is logged in
+    let myReview;
+    let booking;
+    if (req.user) {
+        myReview = await Review.findOne({ user: req.user.id });
+        booking = await Booking.findOne({ tour: tour.id, user: req.user.id });
+        console.log(booking);
+        if (booking) {
+            booking = true;
+        }
+    }
     //2 build template
     //3 Render that template using tour data
     res.status(200).render('tour', {
         title: `${tour.name} Tour`,
-        tour
+        tour,
+        // user, full as db also available assigned in previous middleware as res.locals.user=dbUser
+        myReview,
+        booking
     });
 });
 

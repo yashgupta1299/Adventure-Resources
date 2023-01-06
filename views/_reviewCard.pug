@@ -10,10 +10,10 @@ mixin reviewCard(review)
                     use(xlink:href='/img/icons.svg#icon-star')
 
 
-mixin reviewCard2(review)
+mixin reviewCard2(rating)
     .reviews__rating
         each star in [1, 2, 3, 4, 5]
-            svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+            svg.reviews__star(class=`reviews__star--${rating >= star ? 'active' : 'inactive'}`)
                 use(xlink:href='/img/icons.svg#icon-star')
 
 

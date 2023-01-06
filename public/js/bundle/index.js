@@ -539,6 +539,10 @@ var _stripe = require("./stripe");
 var _alerts = require("./alerts");
 // DOM Elements
 const mapBox = document.getElementById("map");
+const reviewFormCreate = document.getElementById("review--form--create");
+const reviewForm = document.getElementById("review--form");
+const reviewDeleteBtns = document.querySelectorAll(".review__delete");
+const reviewChangeBtns = document.querySelectorAll(".review__edit");
 const loginForm = document.querySelector(".form--login");
 const signupForm = document.querySelector(".form--signup");
 const logoutBtn = document.querySelector(".nav__el--logout");
@@ -553,6 +557,38 @@ if (mapBox) {
     const locations = JSON.parse(document.getElementById("map").dataset.locations);
     (0, _mapbox.displayMap)(locations);
 }
+if (reviewFormCreate) reviewFormCreate.addEventListener("submit", (event)=>{
+    event.preventDefault();
+    const tourid = document.getElementById("review--form--create").dataset.tourid;
+    const review = document.getElementById("review-create").value;
+    const rating = document.getElementById("rating-create").value;
+    (0, _updateSettings.reviewCreate)(tourid, review, rating);
+});
+if (reviewForm) reviewForm.addEventListener("submit", (event)=>{
+    event.preventDefault();
+    const revid = document.getElementById("review--form").dataset.revid;
+    const review = document.getElementById("review").value;
+    const rating = document.getElementById("rating").value;
+    (0, _updateSettings.reviewUpdate)(revid, review, rating);
+});
+if (reviewDeleteBtns) reviewDeleteBtns.forEach((button)=>{
+    button.addEventListener("click", (event)=>{
+        event.preventDefault();
+        // `event.target` refers to the button that was clicked
+        const reviewid = event.target.dataset.reviewid;
+        (0, _updateSettings.reviewDelete)(reviewid);
+    });
+});
+if (reviewChangeBtns) reviewChangeBtns.forEach((button)=>{
+    button.addEventListener("click", (event)=>{
+        event.preventDefault();
+        // `event.target` refers to the button that was clicked
+        const tourid = event.target.dataset.tourid;
+        window.setTimeout(()=>{
+            location.assign(tourid);
+        }, 1500);
+    });
+});
 if (loginForm) loginForm.addEventListener("submit", (event)=>{
     event.preventDefault();
     const email = document.getElementById("email").value;
@@ -787,6 +823,9 @@ const showAlert = (type, msg, time = 5)=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
+parcelHelpers.export(exports, "reviewCreate", ()=>reviewCreate);
+parcelHelpers.export(exports, "reviewUpdate", ()=>reviewUpdate);
+parcelHelpers.export(exports, "reviewDelete", ()=>reviewDelete);
 var _alerts = require("./alerts");
 const updateSettings = async (data, type)=>{
     let res;
@@ -804,7 +843,57 @@ const updateSettings = async (data, type)=>{
         }
     } catch (err) {
         if (type === "photo" && res.data.status === "success") return;
-        (0, _alerts.showAlert)("errror", err.response.data.message);
+        (0, _alerts.showAlert)("error", err.response.data.message);
+    }
+};
+const reviewCreate = async (tour, review, rating)=>{
+    // tour is tourId here
+    let res;
+    try {
+        const url = "/api/v1/reviews";
+        res = await axios({
+            method: "POST",
+            url,
+            data: {
+                review,
+                rating,
+                tour
+            }
+        });
+        if (res.data.status === "success") (0, _alerts.showAlert)("success", `Review created successfully!`);
+    } catch (err) {
+        (0, _alerts.showAlert)("error", err.response.data.message);
+    }
+};
+const reviewUpdate = async (revId, review, rating)=>{
+    let res;
+    try {
+        const url = "/api/v1/reviews/" + revId;
+        res = await axios({
+            method: "PATCH",
+            url,
+            data: {
+                review,
+                rating
+            }
+        });
+        if (res.data.status === "success") (0, _alerts.showAlert)("success", `Review updated successfully!`);
+    } catch (err) {
+        (0, _alerts.showAlert)("error", err.response.data.message);
+    }
+};
+const reviewDelete = async (reviewid)=>{
+    let res;
+    try {
+        const url = "/api/v1/reviews/" + reviewid;
+        res = await axios({
+            method: "DELETE",
+            url
+        });
+        // showAlert('success', `Review deleted successfully!`);
+        location.reload(true);
+    } catch (err) {
+        (0, _alerts.showAlert)("error", err.response.data.message);
     }
 };
 

@@ -247,6 +247,9 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
         // storing for using in upcoming middlewares or in pug files. user is
         // now a local variable for them
         res.locals.user = dbUser;
+
+        // add for display of user review in view controller
+        req.user = dbUser;
     } catch (err) {
         return next();
     }
