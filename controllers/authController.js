@@ -50,24 +50,20 @@ const createSendjwt = (user, statusCode, req, res) => {
 // });
 
 exports.signup = catchAsync(async (req, res, next) => {
-    // check if user exists in our database if yes the it menas it is a change password request
-    const dbUser = await User.findOne({
-        email: req.body.email
-    });
-
-    if (dbUser) {
+    // check from a previous middleware coming data if req.body.user exist then it means it is a change password request
+    if (req.body.user) {
         // change the data
-        dbUser.name = req.body.name;
-        dbUser.password = req.body.password;
-        dbUser.passwordConfirm = req.body.passwordConfirm;
+        req.body.user.name = req.body.name;
+        req.body.user.password = req.body.password;
+        req.body.user.passwordConfirm = req.body.passwordConfirm;
 
         // here we run save because we want validation of our argument again
         // because of save function validators will run
         // updating passwordChangedAt variable also in pre 'save'
-        await dbUser.save();
+        await req.body.user.save();
 
         // send the jwt token
-        createSendjwt(dbUser, 201, req, res);
+        createSendjwt(req.body.user, 201, req, res);
     } else {
         const newUser = await User.create({
             name: req.body.name,
@@ -198,17 +194,26 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
         return next(new AppError('Email authentication failed', 401));
     }
 
-    //4. check if password is changed or not after the issue of token
-    if (User.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
-        return next(
-            new AppError(
-                'Password is recently changed, please log in again:',
-                401
-            )
-        );
+    // important so that no one can make false attack
+    req.body.user = undefined;
+
+    //4. check if password is changed or not after the issue of token only for forget password logic
+    const dbUser = await User.find({ email: decoded.id });
+    if (dbUser) {
+        if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
+            return next(
+                new AppError(
+                    'Password is recently changed, please log in again:',
+                    401
+                )
+            );
+        }
+        // storing for changing the data in next middleware
+        req.body.user = dbUser;
     }
 
     // storing for using in upcoming middlewares
+
     req.body.email = decoded.id;
 
     // all safe Grant Access
@@ -217,6 +222,9 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
     //1. Check weather token is present or not and extract it if present
+    // we will use them in future middlewares
+    res.locals.user = undefined;
+    req.user = undefined;
     try {
         let token;
         if (req.cookies && req.cookies.jwt) {
