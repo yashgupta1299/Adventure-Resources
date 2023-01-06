@@ -13,6 +13,7 @@ const jwtSignToken = id => {
 };
 
 const createSendjwt = (user, statusCode, req, res) => {
+    // const token = jwtSignToken(user.email);
     const token = jwtSignToken(user.id);
     res.cookie('jwt', token, {
         expires: new Date(
@@ -130,6 +131,48 @@ exports.protect = catchAsync(async (req, res, next) => {
     // storing for using in upcoming middlewares or in pug files. user is
     // now a local variable for them
     res.locals.user = dbUser;
+
+    // all safe Grant Access
+    next();
+});
+
+exports.isEmailVerified = catchAsync(async (req, res, next) => {
+    //1. Check weather token is present or not and extract it if present
+    let token;
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies && req.cookies.jwt) {
+        token = req.cookies.jwt;
+    }
+
+    if (!token) {
+        return next(new AppError('Email authentication failed', 401));
+    }
+
+    //2. verify the token and if it failed promise is rejected
+    let decoded;
+    try {
+        decoded = await util.promisify(jwt.verify)(
+            token,
+            process.env.JWT_SECRET_KEY
+        );
+    } catch (err) {
+        return next(new AppError('Email authentication failed', 401));
+    }
+
+    //3. check if user exists in our database
+    // const DBemail = await User.findOne({ email: decoded.id });
+    // if (DBemail) {
+    //     return next(
+    //         new AppError('Email is already registered! please log in', 401)
+    //     );
+    // }
+
+    // storing for using in upcoming middlewares
+    req.body.email = decoded.id;
 
     // all safe Grant Access
     next();

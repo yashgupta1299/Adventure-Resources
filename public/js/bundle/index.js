@@ -540,12 +540,14 @@ var _alerts = require("./alerts");
 // DOM Elements
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
+const signupForm = document.querySelector(".form--signup");
 const logoutBtn = document.querySelector(".nav__el--logout");
 const dataForm = document.querySelector(".form-user-data");
 const passwordForm = document.querySelector(".form-user-password");
 const imageChange = document.querySelector(".form__upload");
 const bookTourBTN = document.getElementById("book-tour");
 const headAlertDataset = document.querySelector("body").dataset.alert;
+const queryString = window.location.search;
 // DELEGATION
 if (mapBox) {
     const locations = JSON.parse(document.getElementById("map").dataset.locations);
@@ -556,6 +558,13 @@ if (loginForm) loginForm.addEventListener("submit", (event)=>{
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     (0, _login.login)(email, password);
+});
+if (signupForm) signupForm.addEventListener("submit", (event)=>{
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const password = document.getElementById("password").value;
+    const passwordConfirm = document.getElementById("passwordConfirm").value;
+    (0, _login.signup)(name, password, passwordConfirm);
 });
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _login.logout));
 // without photo
@@ -615,6 +624,11 @@ if (bookTourBTN) bookTourBTN.addEventListener("click", (event)=>{
     (0, _stripe.bookTour)(tourId);
 });
 if (headAlertDataset) (0, _alerts.showAlert)("success", headAlertDataset, 20);
+if (queryString) {
+    const urlParams = new URLSearchParams(queryString);
+    const email = urlParams.get("email");
+    if (email) document.getElementById("emailSignUP").value = email;
+}
 
 },{"./mapbox":"hfhF4","./login":"iIace","./updateSettings":"3LsIT","./stripe":"7svXG","./alerts":"l7zLi"}],"hfhF4":[function(require,module,exports) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -689,6 +703,7 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
+parcelHelpers.export(exports, "signup", ()=>signup);
 parcelHelpers.export(exports, "logout", ()=>logout);
 var _alerts = require("./alerts");
 const login = async (email, password)=>{
@@ -703,6 +718,27 @@ const login = async (email, password)=>{
         });
         if (res.data.status === "success") {
             (0, _alerts.showAlert)("success", "Logged in successfully!");
+            window.setTimeout(()=>{
+                location.assign("/");
+            }, 1500);
+        }
+    } catch (err) {
+        (0, _alerts.showAlert)("error", err.response.data.message);
+    }
+};
+const signup = async (name, password, passwordConfirm)=>{
+    try {
+        const res = await axios({
+            method: "POST",
+            url: "api/v1/users/signup",
+            data: {
+                name,
+                password,
+                passwordConfirm
+            }
+        });
+        if (res.data.status === "success") {
+            (0, _alerts.showAlert)("success", "Signup successfull!");
             window.setTimeout(()=>{
                 location.assign("/");
             }, 1500);

@@ -94,7 +94,7 @@ block content
     section.section-cta
         .login-form
             h2.heading-secondary.ma-bt-lg Leave a review
-            form.form.review--form(data-ids=`${JSON.stringify( {user: user.id, tour: tour.id })}`)
+            form.form.review--form(data-ids=`${JSON.stringify( {user: '11user.id', tour: '11tour.id' })}`)
                 .form__group
                     label.form__label(for='review') Review
                     input#review.form__input(type='text' minlength="40", required)
