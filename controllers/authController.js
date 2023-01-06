@@ -198,7 +198,7 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
     req.body.user = undefined;
 
     //4. check if password is changed or not after the issue of token only for forget password logic
-    const dbUser = await User.find({ email: decoded.id });
+    const dbUser = await User.findOne({ email: decoded.id });
     if (dbUser) {
         if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
             return next(
@@ -210,6 +210,7 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
         }
         // storing for changing the data in next middleware
         req.body.user = dbUser;
+        console.log(2, dbUser);
     }
 
     // storing for using in upcoming middlewares
