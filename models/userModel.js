@@ -49,20 +49,20 @@ const userSchema = new mongoose.Schema({
 
 // function to create hash before saving the password
 // runs on CREATE and SAVE
-// userSchema.pre('save', async function(next) {
-//     // isModified function:
-//     // Returns true if any of the given paths is modified,
-//     // else false. If no arguments, returns true if any path
-//     // in this document is modified.
-//     if (!this.isModified('password')) return next();
+userSchema.pre('save', async function(next) {
+    // isModified function:
+    // Returns true if any of the given paths is modified,
+    // else false. If no arguments, returns true if any path
+    // in this document is modified.
+    if (!this.isModified('password')) return next();
 
-//     // hash the password with cost 12
-//     this.password = await bcrypt.hash(this.password, 12);
+    // hash the password with cost 12
+    this.password = await bcrypt.hash(this.password, 12);
 
-//     // delete passwordConfirm field
-//     this.passwordConfirm = undefined;
-//     next();
-// });
+    // delete passwordConfirm field
+    this.passwordConfirm = undefined;
+    next();
+});
 
 // updating passwordChangedAt variable
 userSchema.pre('save', function(next) {

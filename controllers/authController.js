@@ -13,7 +13,6 @@ const jwtSignToken = id => {
 };
 
 const createSendjwt = (user, statusCode, req, res) => {
-    // const token = jwtSignToken(user.email);
     const token = jwtSignToken(user.id);
     res.cookie('jwt', token, {
         expires: new Date(
@@ -34,20 +33,54 @@ const createSendjwt = (user, statusCode, req, res) => {
     });
 };
 
-exports.signup = catchAsync(async (req, res, next) => {
-    const newUser = await User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
-    });
-    // email send for uploading user photo
-    const userNE = { name: newUser.name, email: newUser.email };
-    const meSectionUrl = `${req.protocol}://${req.get('host')}/me`;
-    await new Email(userNE, meSectionUrl).sendWelcome();
+// exports.signup = catchAsync(async (req, res, next) => {
+//     const newUser = await User.create({
+//         name: req.body.name,
+//         email: req.body.email,
+//         password: req.body.password,
+//         passwordConfirm: req.body.passwordConfirm
+//     });
+//     // email send for uploading user photo
+//     const userNE = { name: newUser.name, email: newUser.email };
+//     const meSectionUrl = `${req.protocol}://${req.get('host')}/me`;
+//     await new Email(userNE, meSectionUrl).sendWelcome();
 
-    // send jwt
-    createSendjwt(newUser, 201, req, res);
+//     // send jwt
+//     createSendjwt(newUser, 201, req, res);
+// });
+
+exports.signup = catchAsync(async (req, res, next) => {
+    // check if user exists in our database if yes the it menas it is a change password request
+    const dbUser = await User.findOne({
+        email: req.body.email
+    });
+
+    if (dbUser) {
+        // change the data
+        dbUser.password = req.body.password;
+        dbUser.passwordConfirm = req.body.passwordConfirm;
+
+        // here we run save because we want validation of our argument again
+        // because of save function validators will run
+        await dbUser.save();
+
+        // send the jwt token
+        createSendjwt(dbUser, 201, req, res);
+    } else {
+        const newUser = await User.create({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            passwordConfirm: req.body.passwordConfirm
+        });
+        // email send for uploading user photo
+        const userNE = { name: newUser.name, email: newUser.email };
+        const meSectionUrl = `${req.protocol}://${req.get('host')}/me`;
+        await new Email(userNE, meSectionUrl).sendWelcome();
+
+        // send jwt
+        createSendjwt(newUser, 201, req, res);
+    }
 });
 
 exports.login = catchAsync(async (req, res, next) => {
