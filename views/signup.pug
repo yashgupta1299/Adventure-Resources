@@ -7,10 +7,10 @@ block content
             form.form.form--signup
                 .form__group
                     label.form__label(for='email') Email address
-                    input#emailSignUP.form__input_re(readonly type='email', value=`${}`, required)
+                    input#emailSignUP.form__input_re(readonly type='email', required)
                 .form__group
                     label.form__label(for='name') Full name
-                    input#nameSignup#name.form__input(type='text', value=`${}`, required)
+                    input#nameSignup#name.form__input(type='text', required)
                 .form__group.ma-bt-md
                     label.form__label(for='password') Password
                     input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
