@@ -48,7 +48,9 @@ export const reviewCreate = async (tour, review, rating) => {
         });
         if (res.data.status === 'success') {
             showAlert('success', `Review created successfully!`);
-            location.reload(true);
+            window.setTimeout(() => {
+                location.reload(true);
+            }, 3000);
         }
     } catch (err) {
         showAlert('error', err.response.data.message);
@@ -68,7 +70,9 @@ export const reviewUpdate = async (revId, review, rating) => {
         });
         if (res.data.status === 'success') {
             showAlert('success', `Review updated successfully!`);
-            // location.reload(true);
+            window.setTimeout(() => {
+                location.reload(true);
+            }, 3000);
         }
     } catch (err) {
         showAlert('error', err.response.data.message);
@@ -83,8 +87,10 @@ export const reviewDelete = async reviewid => {
             method: 'DELETE',
             url
         });
-        // showAlert('success', `Review deleted successfully!`);
-        location.reload(true);
+        showAlert('success', `Review deleted successfully!`);
+        window.setTimeout(() => {
+            location.reload(true);
+        }, 3000);
     } catch (err) {
         showAlert('error', err.response.data.message);
     }
