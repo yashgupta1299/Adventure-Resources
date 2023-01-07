@@ -189,8 +189,6 @@ if (queryString) {
     }
     console.log(name);
     if (name) {
-        document.querySelector('.nameSignup').value = name
-            .split('%20')
-            .join(' ');
+        document.querySelector('.nameSignup').value = decodeURI(name);
     }
 }
