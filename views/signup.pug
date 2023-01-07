@@ -5,14 +5,12 @@ block content
         .login-form(style='padding:2.5rem 7rem')
             h2.heading-secondary.ma-bt-lg Sign up
             form.form.form--signup
-                //- - if(email)
                 .form__group
                     label.form__label(for='email') Email address
-                    //- input#email.form__input(type='email', placeholder='you@example.com', required)
-                    input#emailSignUP.form__input_re(readonly type='email', value=`${email}`, required)
+                    input#emailSignUP.form__input_re(readonly type='email', value=`${}`, required)
                 .form__group
                     label.form__label(for='name') Full name
-                    input#name.form__input(type='text', placeholder='Your name...', required)
+                    input#nameSignup#name.form__input(type='text', value=`${}`, required)
                 .form__group.ma-bt-md
                     label.form__label(for='password') Password
                     input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')

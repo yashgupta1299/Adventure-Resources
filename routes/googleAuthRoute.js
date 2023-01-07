@@ -34,7 +34,7 @@ router.get(
             // connection can be done only over https
             secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
         });
-        res.redirect(`/signup?email=${req.user.email}`);
+        res.redirect(`/signup?email=${req.user.email}&name=${req.user.name}`);
     }
 );
 

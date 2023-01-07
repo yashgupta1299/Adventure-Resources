@@ -183,7 +183,11 @@ if (headAlertDataset) {
 if (queryString) {
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
+    const name = urlParams.get('name');
     if (email) {
         document.getElementById('emailSignUP').value = email;
+    }
+    if (name) {
+        document.getElementById('nameSignup').value = name;
     }
 }
