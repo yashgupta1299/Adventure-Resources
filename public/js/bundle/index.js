@@ -665,7 +665,8 @@ if (queryString) {
     const email = urlParams.get("email");
     const name = urlParams.get("name");
     if (email) document.getElementById("emailSignUP").value = email;
-    if (name) document.getElementById("nameSignup").value = name;
+    console.log(name);
+    if (name) document.getElementById("nameSignup").value = name.split("%20").join(" ");
 }
 
 },{"./mapbox":"hfhF4","./login":"iIace","./updateSettings":"3LsIT","./stripe":"7svXG","./alerts":"l7zLi"}],"hfhF4":[function(require,module,exports) {

@@ -187,7 +187,10 @@ if (queryString) {
     if (email) {
         document.getElementById('emailSignUP').value = email;
     }
+    console.log(name);
     if (name) {
-        document.getElementById('nameSignup').value = name;
+        document.getElementById('nameSignup').value = name
+            .split('%20')
+            .join(' ');
     }
 }
