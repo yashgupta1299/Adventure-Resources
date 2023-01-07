@@ -48,7 +48,7 @@ export const reviewCreate = async (tour, review, rating) => {
         });
         if (res.data.status === 'success') {
             showAlert('success', `Review created successfully!`);
-            // location.reload(true);
+            location.reload(true);
         }
     } catch (err) {
         showAlert('error', err.response.data.message);

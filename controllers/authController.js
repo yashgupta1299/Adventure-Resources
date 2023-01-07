@@ -210,7 +210,6 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
         }
         // storing for changing the data in next middleware
         req.body.user = dbUser;
-        console.log(2, dbUser);
     }
 
     // storing for using in upcoming middlewares
@@ -431,7 +430,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         req.params.token,
         process.env.JWT_SECRET_KEY
     );
-    // console.log(decoded);
+
     // check if user still exists in our database and reset token issued time
     const dbUser = await User.findOne({
         email: decoded.id,
