@@ -189,7 +189,7 @@ if (queryString) {
     }
     console.log(name);
     if (name) {
-        document.getElementById('nameSignup').value = name
+        document.querySelector('.nameSignup').value = name
             .split('%20')
             .join(' ');
     }
