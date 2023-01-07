@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 passport.use(
     new GoogleStrategy(
         {
-            callbackURL: process.env.callbackURLdomain + '/auth/callback',
+            callbackURL: `${process.env.callbackURLdomain}/auth/callback`,
             clientID: process.env.clientID,
             clientSecret: process.env.clientSecret
         },
@@ -18,7 +18,7 @@ passport.use(
             // console.log(profile);
             const user = {
                 email: profile._json.email,
-                username: profile._json.name,
+                name: profile._json.name,
                 // profileUrl: profile._json.picture,
                 token
             };

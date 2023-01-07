@@ -142,9 +142,9 @@
       this[globalName] = mainExports;
     }
   }
-})({"hFizm":[function(require,module,exports) {
+})({"htkxk":[function(require,module,exports) {
 var HMR_HOST = null;
-var HMR_PORT = 1234;
+var HMR_PORT = 53310;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "6711683c4eaf4fa2";
 module.bundle.HMR_BUNDLE_ID = "6fb421bbaf4698c8";
@@ -665,7 +665,8 @@ if (queryString) {
     const email = urlParams.get("email");
     const name = urlParams.get("name");
     if (email) document.getElementById("emailSignUP").value = email;
-    if (name) document.getElementById("nameSignup").value = name;
+    console.log(name);
+    if (name) document.querySelector(".nameSignup").value = decodeURI(name);
 }
 
 },{"./mapbox":"hfhF4","./login":"iIace","./updateSettings":"3LsIT","./stripe":"7svXG","./alerts":"l7zLi"}],"hfhF4":[function(require,module,exports) {
@@ -940,6 +941,6 @@ const bookTour = async (tourId)=>{
     }
 };
 
-},{"./alerts":"l7zLi","@parcel/transformer-js/src/esmodule-helpers.js":"edRoh"}]},["hFizm","6uYF5"], "6uYF5", "parcelRequire1248")
+},{"./alerts":"l7zLi","@parcel/transformer-js/src/esmodule-helpers.js":"edRoh"}]},["htkxk","6uYF5"], "6uYF5", "parcelRequire1248")
 
 //# sourceMappingURL=index.js.map

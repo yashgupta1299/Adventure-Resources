@@ -187,7 +187,8 @@ if (queryString) {
     if (email) {
         document.getElementById('emailSignUP').value = email;
     }
+    console.log(name);
     if (name) {
-        document.getElementById('nameSignup').value = name;
+        document.querySelector('.nameSignup').value = decodeURI(name);
     }
 }
