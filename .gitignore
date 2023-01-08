@@ -1,6 +1,7 @@
 node_modules/
 dev-data/
 *.env
+.vscode
 .DS_Store
 .cache
 .parcel-cache

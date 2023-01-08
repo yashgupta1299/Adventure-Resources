@@ -85,3 +85,16 @@ note: choosing first character also work
 
 6.b Remove directory from Git but NOT local
 "git rm -r --cached myFolder"
+
+### Instructions to again start
+
+1. As our API and frontend is hosted on same place hence we can call ourAPI from frontend with relative url also means we can from this
+   "http://127.0.0.1:3000/api/v1/users/login"
+   to this
+   "/api/v1/users/login"
+
+2. hosted app:
+   "https://adventure.up.railway.app"
+
+3. while restarting note thungs to be change in
+   webhook on stripe and google outh url from callback url from .env file and on google credential website.
