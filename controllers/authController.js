@@ -1,11 +1,27 @@
 const jwt = require('jsonwebtoken');
-const util = require('util');
+const { promisify } = require('util');
+const jwksClient = require('jwks-rsa');
+
 // const crypto = require('crypto');
+
 const Google = require('./../models/googleModel');
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/AppError');
 const Email = require('./../utils/email');
+
+// obtaining public key from authentication server
+const publicKey = async kid => {
+    // kid is unique id given by creater to each jwk
+    const client = jwksClient({
+        jwksUri: 'http://127.0.0.1:3000/.well-known/jwks.json',
+        cache: true,
+        rateLimit: true
+    });
+    // we can obtain key according to kid value
+    const key = await client.getSigningKey(kid);
+    return key.getPublicKey();
+};
 
 const sendResponse = (user, statusCode, req, res) => {
     user.password = undefined;
@@ -109,10 +125,20 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     //2. verify the token and if it failed promise is rejected
-    const decoded = await util.promisify(jwt.verify)(
-        token,
-        process.env.JWT_SECRET_KEY
-    );
+    // const decoded = await promisify(jwt.verify)(
+    //     token,
+    //     process.env.JWT_SECRET_KEY
+    // );
+    let decoded;
+    try {
+        const kid = 'abcd';
+        const pk = await publicKey(kid);
+        decoded = await promisify(jwt.verify)(token, pk, {
+            algorithm: ['RS256']
+        });
+    } catch (err) {
+        return next(new AppError('Email authentication failed', 401));
+    }
 
     //3. check if user still exists in our database
     const dbUser = await User.findById(decoded.id);
@@ -161,12 +187,23 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
     }
 
     //2. verify the token and if it failed promise is rejected
+    // let decoded;
+    // try {
+    //     decoded = await promisify(jwt.verify)(
+    //         token,
+    //         process.env.JWT_SECRET_KEY
+    //     );
+    // } catch (err) {
+    //     return next(new AppError('Email authentication failed', 401));
+    // }
+
     let decoded;
     try {
-        decoded = await util.promisify(jwt.verify)(
-            token,
-            process.env.JWT_SECRET_KEY
-        );
+        const kid = 'abcd';
+        const pk = await publicKey(kid);
+        decoded = await promisify(jwt.verify)(token, pk, {
+            algorithm: ['RS256']
+        });
     } catch (err) {
         return next(new AppError('Email authentication failed', 401));
     }
@@ -175,14 +212,14 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
 
     req.body.user = undefined;
     //4. check if password is changed or not after the issue of token only for forget password logic
-    const email = (await Google.findOne({ googleId: decoded.id })).email;
+    const userEmail = (await Google.findOne({ googleId: decoded.id })).email;
 
-    if (!email) {
+    if (!userEmail) {
         return next(
             new AppError('Something went wrong, please try again!', 401)
         );
     }
-    const dbUser = await User.findOne({ email });
+    const dbUser = await User.findOne({ email: userEmail });
     if (dbUser) {
         if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
             return next(
@@ -198,7 +235,7 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
 
     // storing for using in upcoming middlewares
 
-    req.body.email = email;
+    req.body.email = userEmail;
 
     // all safe Grant Access
     next();
@@ -220,10 +257,20 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
         }
 
         //2. verify the token and if it failed promise is rejected
-        const decoded = await util.promisify(jwt.verify)(
-            token,
-            process.env.JWT_SECRET_KEY
-        );
+        // const decoded = await promisify(jwt.verify)(
+        //     token,
+        //     process.env.JWT_SECRET_KEY
+        // );
+        let decoded;
+        try {
+            const kid = 'abcd';
+            const pk = await publicKey(kid);
+            decoded = await promisify(jwt.verify)(token, pk, {
+                algorithm: ['RS256']
+            });
+        } catch (err) {
+            return next();
+        }
 
         //3. check if user still exists in our database
         const dbUser = await User.findById(decoded.id);
