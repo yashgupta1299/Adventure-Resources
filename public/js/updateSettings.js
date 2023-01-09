@@ -18,7 +18,21 @@ export const updateSettings = async (data, type) => {
         });
 
         if (res.data.status === 'success') {
-            showAlert('success', `${type.toUpperCase()} updated successfully!`);
+            if (type === 'password') {
+                showAlert(
+                    'success',
+                    `${type.toUpperCase()} updated successfully!`
+                );
+                window.setTimeout(() => {
+                    location.assign('/login');
+                }, 2500);
+            } else {
+                showAlert(
+                    'success',
+                    `${type.toUpperCase()} updated successfully!`
+                );
+            }
+
             if (type === 'photo') {
                 // note return also goes to catch block hence handle that case also
                 return res.data.data.updatedUser.photo;

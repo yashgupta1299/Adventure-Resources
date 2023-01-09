@@ -14,7 +14,6 @@ const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
 const bookingRouter = require('./routes/bookingRoute');
 const viewRouter = require('./routes/viewRoute');
-const googleAuthRoute = require('./routes/googleAuthRoute');
 const AppError = require('./utils/AppError');
 const bookingController = require('./controllers/bookingController');
 const globalErrorController = require('./controllers/globalErrorController');
@@ -134,7 +133,6 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/auth', googleAuthRoute);
 app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);

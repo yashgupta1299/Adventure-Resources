@@ -2,18 +2,23 @@
 // import axios from 'axios';
 import { showAlert } from './alerts';
 
+// const urlDomain = '';
+const urlDomain = 'http://127.0.0.1:3000';
+
 export const login = async (email, password) => {
     try {
         const res = await axios({
             method: 'POST',
-            url: '/api/v1/users/login',
+            url: urlDomain + '/user/login',
             data: {
                 email,
                 password
-            }
+            },
+            withCredentials: true
         });
         if (res.data.status === 'success') {
             showAlert('success', 'Logged in successfully!');
+            console.log(res);
             window.setTimeout(() => {
                 location.assign('/');
             }, 1500);
@@ -27,12 +32,13 @@ export const signup = async (name, password, passwordConfirm) => {
     try {
         const res = await axios({
             method: 'POST',
-            url: 'api/v1/users/signup',
+            url: urlDomain + '/user/signup',
             data: {
                 name,
                 password,
                 passwordConfirm
-            }
+            },
+            withCredentials: true
         });
 
         if (res.data.status === 'success') {
@@ -50,7 +56,8 @@ export const logout = async () => {
     try {
         const res = await axios({
             method: 'GET',
-            url: '/api/v1/users/logout'
+            url: urlDomain + '/user/logout',
+            withCredentials: true
         });
         if (res.data.status === 'success') {
             // location.reload(true);

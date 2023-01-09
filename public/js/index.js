@@ -1,7 +1,7 @@
 /* eslint-disable */
 // import '@babel/polyfill';
 import { displayMap } from './mapbox';
-import { login, logout, signup } from './login';
+import { login, logout, signup, googleOuth } from './authentiication';
 import {
     updateSettings,
     reviewCreate,
@@ -84,6 +84,7 @@ if (loginForm) {
         login(email, password);
     });
 }
+
 if (signupForm) {
     signupForm.addEventListener('submit', event => {
         event.preventDefault();
