@@ -914,7 +914,7 @@ const signup = async (name, password, passwordConfirm)=>{
     try {
         const res = await axios({
             method: "POST",
-            url: urlDomain + "/user/signup",
+            url: "/api/v1/users/signup",
             data: {
                 name,
                 password,
@@ -925,7 +925,7 @@ const signup = async (name, password, passwordConfirm)=>{
         if (res.data.status === "success") {
             (0, _alerts.showAlert)("success", "Signup successfull!");
             window.setTimeout(()=>{
-                location.assign("/");
+                location.assign("/login");
             }, 1500);
         }
     } catch (err) {

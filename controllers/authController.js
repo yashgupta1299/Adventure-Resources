@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const util = require('util');
 // const crypto = require('crypto');
+const Google = require('./../models/googleModel');
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/AppError');
@@ -143,13 +144,16 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.isEmailVerified = catchAsync(async (req, res, next) => {
     //1. Check weather token is present or not and extract it if present
     let token;
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies && req.cookies.jwt) {
-        token = req.cookies.jwt;
+    // note either give bearer token or cookie token
+    if (process.env.NODE_ENV === 'development') {
+        if (
+            req.headers.authorization &&
+            req.headers.authorization.startsWith('Bearer')
+        ) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+    } else if (req.cookies && req.cookies.sta) {
+        token = req.cookies.sta;
     }
 
     if (!token) {
@@ -168,15 +172,22 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
     }
 
     // important so that no one can make false attack
-    req.body.user = undefined;
 
+    req.body.user = undefined;
     //4. check if password is changed or not after the issue of token only for forget password logic
-    const dbUser = await User.findOne({ email: decoded.id });
+    const email = (await Google.findOne({ googleId: decoded.id })).email;
+
+    if (!email) {
+        return next(
+            new AppError('Something went wrong, please try again!', 401)
+        );
+    }
+    const dbUser = await User.findOne({ email });
     if (dbUser) {
         if (dbUser.isTokenIssuedBeforePassChanged(decoded.iat) === true) {
             return next(
                 new AppError(
-                    'Password is recently changed, please log in again:',
+                    'Password is recently changed, please try again!',
                     401
                 )
             );
@@ -187,7 +198,7 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
 
     // storing for using in upcoming middlewares
 
-    req.body.email = decoded.id;
+    req.body.email = email;
 
     // all safe Grant Access
     next();

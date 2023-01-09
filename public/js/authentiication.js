@@ -32,7 +32,7 @@ export const signup = async (name, password, passwordConfirm) => {
     try {
         const res = await axios({
             method: 'POST',
-            url: urlDomain + '/user/signup',
+            url: '/api/v1/users/signup',
             data: {
                 name,
                 password,
@@ -44,7 +44,7 @@ export const signup = async (name, password, passwordConfirm) => {
         if (res.data.status === 'success') {
             showAlert('success', 'Signup successfull!');
             window.setTimeout(() => {
-                location.assign('/');
+                location.assign('/login');
             }, 1500);
         }
     } catch (err) {
