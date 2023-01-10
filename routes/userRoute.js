@@ -5,9 +5,8 @@ const authController = require('./../controllers/authController');
 const router = express.Router();
 
 // !router.route('/login').post(authController.login);
-// !router.route('/logout').get(authController.logout);
 router.post('/signup', authController.isEmailVerified, authController.signup);
-
+router.get('/logout', authController.logout);
 // Protect all routes after this middleware
 router.use(authController.protect);
 

@@ -91,27 +91,39 @@ exports.signup = catchAsync(async (req, res, next) => {
 //     createSendjwt(user, 201, req, res);
 // });
 
-// !exports.logout = (req, res) => {
-//     // altered jwt so that verification failed when server reloads it
-//     // time expire sso that browser delete the cookie from itself
-//     res.cookie('jwt', 'logged-out', {
-//         expires: new Date(Date.now() + 10 * 1000),
-//         httpOnly: true
-//     });
-//     res.status(200).json({
-//         status: 'success'
-//     });
-// };
+exports.logout = (req, res) => {
+    // altered jwt so that verification failed when server reloads it
+    // time expire so that browser delete the cookie from itself
+    res.cookie('sta', 'logged-out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.cookie('jwt', 'logged-out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.cookie('refreshToken', 'logged-out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.status(200).json({
+        status: 'success'
+    });
+};
 
 exports.protect = catchAsync(async (req, res, next) => {
     //1. Check weather token is present or not and extract it if present
     let token;
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies && req.cookies.jwt) {
+    // note either give bearer token or cookie token
+    if (process.env.NODE_ENV === 'development') {
+        if (
+            req.headers.authorization &&
+            req.headers.authorization.startsWith('Bearer')
+        ) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+    }
+    if (req.cookies && req.cookies.jwt) {
         token = req.cookies.jwt;
     }
 
@@ -125,10 +137,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     //2. verify the token and if it failed promise is rejected
-    // const decoded = await promisify(jwt.verify)(
-    //     token,
-    //     process.env.JWT_SECRET_KEY
-    // );
     let decoded;
     try {
         const kid = 'abcd';
@@ -178,7 +186,8 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
         ) {
             token = req.headers.authorization.split(' ')[1];
         }
-    } else if (req.cookies && req.cookies.sta) {
+    }
+    if (req.cookies && req.cookies.sta) {
         token = req.cookies.sta;
     }
 

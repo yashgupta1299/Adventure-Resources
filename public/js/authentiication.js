@@ -18,7 +18,6 @@ export const login = async (email, password) => {
         });
         if (res.data.status === 'success') {
             showAlert('success', 'Logged in successfully!');
-            console.log(res);
             window.setTimeout(() => {
                 location.assign('/');
             }, 1500);
@@ -56,7 +55,7 @@ export const logout = async () => {
     try {
         const res = await axios({
             method: 'GET',
-            url: urlDomain + '/user/logout',
+            url: '/api/v1/users/logout',
             withCredentials: true
         });
         if (res.data.status === 'success') {
