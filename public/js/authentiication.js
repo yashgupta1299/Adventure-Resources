@@ -26,6 +26,30 @@ export const login = async (email, password) => {
         showAlert('error', err.response.data.message);
     }
 };
+export const getCookie = cname => {
+    let name = cname + '=';
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return '';
+};
+
+export const getAccessToken = async () => {
+    try {
+        const res = await axios({
+            method: 'GET',
+            url: urlDomain + '/user/getAccessToken',
+            withCredentials: true
+        });
+    } catch (err) {}
+};
 
 export const signup = async (name, password, passwordConfirm) => {
     try {

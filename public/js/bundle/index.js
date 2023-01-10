@@ -668,6 +668,9 @@ if (queryString) {
     console.log(name);
     if (name) document.querySelector(".nameSignup").value = decodeURI(name);
 }
+// if cookie is expired or if it is not present
+// if someone externally modified (already considered)
+if ((0, _authentiication.getCookie)("tm") < Date.now()) (0, _authentiication.getAccessToken)();
 
 },{"./mapbox":"hfhF4","./updateSettings":"3LsIT","./stripe":"7svXG","./alerts":"l7zLi","./authentiication":"l8fZt"}],"hfhF4":[function(require,module,exports) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -738,8 +741,7 @@ exports.export = function(dest, destName, get) {
 };
 
 },{}],"3LsIT":[function(require,module,exports) {
-/* eslint-disable */ // import axios from 'axios';
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+/* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
 parcelHelpers.export(exports, "reviewCreate", ()=>reviewCreate);
@@ -883,6 +885,8 @@ const bookTour = async (tourId)=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
+parcelHelpers.export(exports, "getCookie", ()=>getCookie);
+parcelHelpers.export(exports, "getAccessToken", ()=>getAccessToken);
 parcelHelpers.export(exports, "signup", ()=>signup);
 parcelHelpers.export(exports, "logout", ()=>logout);
 var _alerts = require("./alerts");
@@ -908,6 +912,25 @@ const login = async (email, password)=>{
     } catch (err) {
         (0, _alerts.showAlert)("error", err.response.data.message);
     }
+};
+const getCookie = (cname)=>{
+    let name = cname + "=";
+    let ca = document.cookie.split(";");
+    for(let i = 0; i < ca.length; i++){
+        let c = ca[i];
+        while(c.charAt(0) == " ")c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+};
+const getAccessToken = async ()=>{
+    try {
+        const res = await axios({
+            method: "GET",
+            url: urlDomain + "/user/getAccessToken",
+            withCredentials: true
+        });
+    } catch (err) {}
 };
 const signup = async (name, password, passwordConfirm)=>{
     try {

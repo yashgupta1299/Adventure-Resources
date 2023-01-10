@@ -71,26 +71,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     }
 });
 
-// !exports.login = catchAsync(async (req, res, next) => {
-//     const { email, password } = req.body;
-
-//     //1. check wheather email and password is given or not
-//     if (!email || !password) {
-//         return next(new AppError('Please provide email and password', 400));
-//     }
-
-//     //2. check if user exists and password is correct or not
-//     const user = await User.findOne({ email }).select('+password');
-//     // password is original which is taken from user
-//     // user.passwor is coming from a database which is stored in hash form
-//     if (!user || !(await user.correctPassword(password, user.password))) {
-//         return next(new AppError('Please enter valid email or password', 401));
-//     }
-
-//     // everything is ok
-//     createSendjwt(user, 201, req, res);
-// });
-
 exports.logout = (req, res) => {
     // altered jwt so that verification failed when server reloads it
     // time expire so that browser delete the cookie from itself
@@ -98,11 +78,15 @@ exports.logout = (req, res) => {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
-    res.cookie('jwt', 'logged-out', {
+    res.cookie('at', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
-    res.cookie('refreshToken', 'logged-out', {
+    res.cookie('rt', 'logged-out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.cookie('tm', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
@@ -123,8 +107,21 @@ exports.protect = catchAsync(async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
         }
     }
-    if (req.cookies && req.cookies.jwt) {
-        token = req.cookies.jwt;
+
+    let kid;
+    if (req.cookies && req.cookies.at) {
+        kid = 'abcd';
+        token = req.cookies.at;
+    } else if (req.cookies && req.cookies.rt) {
+        kid = 'abcd';
+        token = req.cookies.rt;
+        res.cookie('tm', Date.now() - 1, {
+            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+            // can be changed by browser
+            httpOnly: false,
+            // connection can be done only over https
+            secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+        });
     }
 
     if (!token) {
@@ -139,7 +136,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     //2. verify the token and if it failed promise is rejected
     let decoded;
     try {
-        const kid = 'abcd';
         const pk = await publicKey(kid);
         decoded = await promisify(jwt.verify)(token, pk, {
             algorithm: ['RS256']
@@ -196,15 +192,6 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
     }
 
     //2. verify the token and if it failed promise is rejected
-    // let decoded;
-    // try {
-    //     decoded = await promisify(jwt.verify)(
-    //         token,
-    //         process.env.JWT_SECRET_KEY
-    //     );
-    // } catch (err) {
-    //     return next(new AppError('Email authentication failed', 401));
-    // }
 
     let decoded;
     try {
@@ -255,10 +242,24 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     // we will use them in future middlewares
     res.locals.user = undefined;
     req.user = undefined;
+    // console.log(req.cookies);
     try {
         let token;
-        if (req.cookies && req.cookies.jwt) {
-            token = req.cookies.jwt;
+        let kid;
+        if (req.cookies && req.cookies.at) {
+            kid = 'abcd';
+            token = req.cookies.at;
+        } else if (req.cookies && req.cookies.rt) {
+            kid = 'abcd';
+            token = req.cookies.rt;
+            res.cookie('tm', Date.now() - 1, {
+                expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+                // can be changed by browser
+                httpOnly: false,
+                // connection can be done only over https
+                secure:
+                    req.secure || req.headers['x-forwarded-proto'] === 'https'
+            });
         }
 
         if (!token) {
@@ -266,13 +267,8 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
         }
 
         //2. verify the token and if it failed promise is rejected
-        // const decoded = await promisify(jwt.verify)(
-        //     token,
-        //     process.env.JWT_SECRET_KEY
-        // );
         let decoded;
         try {
-            const kid = 'abcd';
             const pk = await publicKey(kid);
             decoded = await promisify(jwt.verify)(token, pk, {
                 algorithm: ['RS256']

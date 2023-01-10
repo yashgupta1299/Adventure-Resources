@@ -1,13 +1,22 @@
 /* eslint-disable */
 // import '@babel/polyfill';
 import { displayMap } from './mapbox';
-import { login, logout, signup, googleOuth } from './authentiication';
+
+import {
+    login,
+    logout,
+    signup,
+    getAccessToken,
+    getCookie
+} from './authentiication';
+
 import {
     updateSettings,
     reviewCreate,
     reviewUpdate,
     reviewDelete
 } from './updateSettings';
+
 import { bookTour } from './stripe';
 import { showAlert } from './alerts';
 
@@ -75,7 +84,6 @@ if (reviewChangeBtns) {
         });
     });
 }
-
 if (loginForm) {
     loginForm.addEventListener('submit', event => {
         event.preventDefault();
@@ -84,7 +92,6 @@ if (loginForm) {
         login(email, password);
     });
 }
-
 if (signupForm) {
     signupForm.addEventListener('submit', event => {
         event.preventDefault();
@@ -95,7 +102,6 @@ if (signupForm) {
         signup(name, password, passwordConfirm);
     });
 }
-
 if (logoutBtn) {
     logoutBtn.addEventListener('click', logout);
 }
@@ -140,7 +146,6 @@ if (imageChange) {
         }
     });
 }
-
 if (passwordForm) {
     passwordForm.addEventListener('submit', async event => {
         event.preventDefault();
@@ -165,7 +170,6 @@ if (passwordForm) {
         document.getElementById('password-confirm').value = '';
     });
 }
-
 if (bookTourBTN) {
     bookTourBTN.addEventListener('click', event => {
         event.target.textContent = 'Processing...';
@@ -176,11 +180,9 @@ if (bookTourBTN) {
         bookTour(tourId);
     });
 }
-
 if (headAlertDataset) {
     showAlert('success', headAlertDataset, 20);
 }
-
 if (queryString) {
     const urlParams = new URLSearchParams(queryString);
     const email = urlParams.get('email');
@@ -192,4 +194,9 @@ if (queryString) {
     if (name) {
         document.querySelector('.nameSignup').value = decodeURI(name);
     }
+}
+// if cookie is expired or if it is not present
+// if someone externally modified (already considered)
+if (getCookie('tm') < Date.now()) {
+    getAccessToken();
 }
