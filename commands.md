@@ -95,7 +95,7 @@ note: choosing first character also work
 
 2. hosted app:
    "https://adventure.up.railway.app"
-   "https://adventure.authentication.up.railway.app"
+   "https://adventure-authentication.up.railway.app"
 
 3. while restarting note thungs to be change in
    webhook on stripe and google outh url from callback url from .env file and on google credential website.

@@ -3,7 +3,7 @@
 import { showAlert } from './alerts';
 
 // const urlDomain = '';
-const urlDomain = 'https://adventure.authentication.up.railway.app';
+const urlDomain = 'https://adventure-authentication.up.railway.app';
 
 export const login = async (email, password) => {
     try {

@@ -891,7 +891,7 @@ parcelHelpers.export(exports, "signup", ()=>signup);
 parcelHelpers.export(exports, "logout", ()=>logout);
 var _alerts = require("./alerts");
 // const urlDomain = '';
-const urlDomain = "https://adventure.authentication.up.railway.app";
+const urlDomain = "https://adventure-authentication.up.railway.app";
 const login = async (email, password)=>{
     try {
         const res = await axios({
