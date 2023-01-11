@@ -135,10 +135,10 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     let kid;
     if (req.cookies && req.cookies.at) {
-        kid = 'abcd';
+        kid = process.env.KID_AT;
         token = req.cookies.at;
     } else if (req.cookies && req.cookies.rt) {
-        kid = 'abcd';
+        kid = process.env.KID_RT;
         token = req.cookies.rt;
         res.cookie('tm', Date.now() - 1, {
             expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
@@ -227,8 +227,7 @@ exports.isEmailVerified = catchAsync(async (req, res, next) => {
 
     let decoded;
     try {
-        const kid = 'abcd';
-        const pk = await publicKey(kid);
+        const pk = await publicKey(process.env.KID_AT);
         decoded = await promisify(jwt.verify)(token, pk, {
             algorithm: ['RS256']
         });
@@ -279,10 +278,10 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
         let token;
         let kid;
         if (req.cookies && req.cookies.at) {
-            kid = 'abcd';
+            kid = process.env.KID_AT;
             token = req.cookies.at;
         } else if (req.cookies && req.cookies.rt) {
-            kid = 'abcd';
+            kid = process.env.KID_RT;
             token = req.cookies.rt;
             res.cookie('tm', Date.now() - 1, {
                 expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
