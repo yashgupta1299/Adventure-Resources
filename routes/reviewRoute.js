@@ -24,12 +24,12 @@ router
     .get(controller.getReview)
     .patch(
         authController.restricedTo('user', 'admin'),
-        // will restrict to creater only
+        controller.isCreator,
         controller.updateReview
     )
     .delete(
-        // will restrict to creater only
         authController.restricedTo('user', 'admin'),
+        controller.isCreator,
         controller.deleteReview
     );
 
