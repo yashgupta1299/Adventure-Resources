@@ -77,6 +77,7 @@ exports.logout = (req, res) => {
     res.cookie('sta', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'strict',
         secure:
             process.env.cookieSecure ||
@@ -86,6 +87,7 @@ exports.logout = (req, res) => {
     res.cookie('at', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'strict',
         secure:
             process.env.cookieSecure ||
@@ -95,6 +97,7 @@ exports.logout = (req, res) => {
     res.cookie('rt', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'strict',
         secure:
             process.env.cookieSecure ||
@@ -105,6 +108,7 @@ exports.logout = (req, res) => {
     res.cookie('tm', Date.now() + 365 * 24 * 60 * 60 * 1000, {
         expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         httpOnly: false,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'strict',
         secure:
             process.env.cookieSecure ||
@@ -140,7 +144,7 @@ exports.protect = catchAsync(async (req, res, next) => {
             expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
             // can be changed by browser
             httpOnly: false,
-
+            domain: process.env.COOKIE_DOMAIN,
             // cookie send back from browser if generated from the same origin
             sameSite: 'strict',
 
@@ -284,7 +288,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
                 expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
                 // can be changed by browser
                 httpOnly: false,
-
+                domain: process.env.COOKIE_DOMAIN,
                 // cookie send back from browser if generated from the same origin
                 sameSite: 'strict',
 

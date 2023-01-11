@@ -3,7 +3,7 @@
 import { showAlert } from './alerts';
 
 // const urlDomain = '';
-const urlDomain = 'https://adventure-authentication.up.railway.app';
+const urlDomain = 'http://127.0.0.1:3000';
 
 export const login = async (email, password) => {
     try {
