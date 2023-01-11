@@ -664,11 +664,10 @@ if (bookTourBTN) bookTourBTN.addEventListener("click", (event)=>{
 if (headAlertDataset) (0, _alerts.showAlert)("success", headAlertDataset, 20);
 if (queryString) {
     const urlParams = new URLSearchParams(queryString);
-    const email = urlParams.get("email");
-    const name = urlParams.get("name");
-    if (email) document.getElementById("emailSignUP").value = email;
-    console.log(name);
-    if (name) document.querySelector(".nameSignup").value = decodeURI(name);
+    const signUpName = urlParams.get("signUpName");
+    const isPreviousSignup = urlParams.get("isPreviousSignup");
+    if (signUpName) document.querySelector(".nameSignup").value = decodeURI(signUpName);
+    if (isPreviousSignup === "true") (0, _alerts.showAlert)("success", "You have already done Sign up before. If you have not set the password yet then please fill the form", 20);
 }
 // if cookie is expired or if it is not present
 // if someone externally modified (already considered)
@@ -892,7 +891,7 @@ parcelHelpers.export(exports, "signup", ()=>signup);
 parcelHelpers.export(exports, "logout", ()=>logout);
 var _alerts = require("./alerts");
 // const urlDomain = '';
-const urlDomain = "http://127.0.0.1:3000";
+const urlDomain = "https://adventure.authentication.up.railway.app";
 const login = async (email, password)=>{
     try {
         const res = await axios({

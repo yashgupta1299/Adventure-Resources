@@ -187,14 +187,17 @@ if (headAlertDataset) {
 }
 if (queryString) {
     const urlParams = new URLSearchParams(queryString);
-    const email = urlParams.get('email');
-    const name = urlParams.get('name');
-    if (email) {
-        document.getElementById('emailSignUP').value = email;
+    const signUpName = urlParams.get('signUpName');
+    const isPreviousSignup = urlParams.get('isPreviousSignup');
+    if (signUpName) {
+        document.querySelector('.nameSignup').value = decodeURI(signUpName);
     }
-    console.log(name);
-    if (name) {
-        document.querySelector('.nameSignup').value = decodeURI(name);
+    if (isPreviousSignup === 'true') {
+        showAlert(
+            'success',
+            'You have already done Sign up before. If you have not set the password yet then please fill the form',
+            20
+        );
     }
 }
 // if cookie is expired or if it is not present
