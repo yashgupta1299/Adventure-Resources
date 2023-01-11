@@ -98,3 +98,5 @@ note: choosing first character also work
 
 3. while restarting note thungs to be change in
    webhook on stripe and google outh url from callback url from .env file and on google credential website.
+
+4. in cookie Secure inside .env epmty string for false non empty string for true

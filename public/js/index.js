@@ -34,6 +34,7 @@ const passwordForm = document.querySelector('.form-user-password');
 const imageChange = document.querySelector('.form__upload');
 const bookTourBTN = document.getElementById('book-tour');
 const headAlertDataset = document.querySelector('body').dataset.alert;
+const headerName = document.getElementById('headerName');
 const queryString = window.location.search;
 
 // DELEGATION
@@ -108,11 +109,12 @@ if (logoutBtn) {
 
 // without photo
 if (dataForm) {
-    dataForm.addEventListener('submit', event => {
+    dataForm.addEventListener('submit', async event => {
         event.preventDefault();
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
-        updateSettings({ name, email }, 'data');
+        const updatedName = await updateSettings({ name, email }, 'data');
+        headerName.textContent = updatedName;
     });
 }
 

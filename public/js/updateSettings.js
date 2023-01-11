@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { showAlert } from './alerts';
 
-// type can be password or data
+// type can be password or data(in data there is name only) or photo
 export const updateSettings = async (data, type) => {
     let res;
     try {
@@ -33,14 +33,13 @@ export const updateSettings = async (data, type) => {
             }
 
             if (type === 'photo') {
-                // note return also goes to catch block hence handle that case also
                 return res.data.data.updatedUser.photo;
+            }
+            if (type === 'data') {
+                return res.data.data.updatedUser.name;
             }
         }
     } catch (err) {
-        if (type === 'photo' && res.data.status === 'success') {
-            return;
-        }
         showAlert('error', err.response.data.message);
     }
 };

@@ -76,19 +76,40 @@ exports.logout = (req, res) => {
     // time expire so that browser delete the cookie from itself
     res.cookie('sta', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        sameSite: 'strict',
+        secure:
+            process.env.cookieSecure ||
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https'
     });
     res.cookie('at', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        sameSite: 'strict',
+        secure:
+            process.env.cookieSecure ||
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https'
     });
     res.cookie('rt', 'logged-out', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        sameSite: 'strict',
+        secure:
+            process.env.cookieSecure ||
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https'
     });
-    res.cookie('tm', 'logged-out', {
-        expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+
+    res.cookie('tm', Date.now() + 365 * 24 * 60 * 60 * 1000, {
+        expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        httpOnly: false,
+        sameSite: 'strict',
+        secure:
+            process.env.cookieSecure ||
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https'
     });
     res.status(200).json({
         status: 'success'
@@ -119,8 +140,15 @@ exports.protect = catchAsync(async (req, res, next) => {
             expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
             // can be changed by browser
             httpOnly: false,
+
+            // cookie send back from browser if generated from the same origin
+            sameSite: 'strict',
+
             // connection can be done only over https
-            secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+            secure:
+                process.env.cookieSecure ||
+                req.secure ||
+                req.headers['x-forwarded-proto'] === 'https'
         });
     }
 
@@ -256,9 +284,15 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
                 expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
                 // can be changed by browser
                 httpOnly: false,
+
+                // cookie send back from browser if generated from the same origin
+                sameSite: 'strict',
+
                 // connection can be done only over https
                 secure:
-                    req.secure || req.headers['x-forwarded-proto'] === 'https'
+                    process.env.cookieSecure ||
+                    req.secure ||
+                    req.headers['x-forwarded-proto'] === 'https'
             });
         }
 

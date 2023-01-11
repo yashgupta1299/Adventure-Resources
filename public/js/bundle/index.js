@@ -551,6 +551,7 @@ const passwordForm = document.querySelector(".form-user-password");
 const imageChange = document.querySelector(".form__upload");
 const bookTourBTN = document.getElementById("book-tour");
 const headAlertDataset = document.querySelector("body").dataset.alert;
+const headerName = document.getElementById("headerName");
 const queryString = window.location.search;
 // DELEGATION
 if (mapBox) {
@@ -604,14 +605,15 @@ if (signupForm) signupForm.addEventListener("submit", (event)=>{
 });
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _authentiication.logout));
 // without photo
-if (dataForm) dataForm.addEventListener("submit", (event)=>{
+if (dataForm) dataForm.addEventListener("submit", async (event)=>{
     event.preventDefault();
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
-    (0, _updateSettings.updateSettings)({
+    const updatedName = await (0, _updateSettings.updateSettings)({
         name,
         email
     }, "data");
+    headerName.textContent = updatedName;
 });
 // with photo and all data submit at once i.e name email photo
 //hence need to create form data object no need to change updateSettings
@@ -764,11 +766,10 @@ const updateSettings = async (data, type)=>{
                     location.assign("/login");
                 }, 2500);
             } else (0, _alerts.showAlert)("success", `${type.toUpperCase()} updated successfully!`);
-            if (type === "photo") // note return also goes to catch block hence handle that case also
-            return res.data.data.updatedUser.photo;
+            if (type === "photo") return res.data.data.updatedUser.photo;
+            if (type === "data") return res.data.data.updatedUser.name;
         }
     } catch (err) {
-        if (type === "photo" && res.data.status === "success") return;
         (0, _alerts.showAlert)("error", err.response.data.message);
     }
 };

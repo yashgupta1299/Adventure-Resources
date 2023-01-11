@@ -22,7 +22,7 @@ const app = express();
 
 // Global Middlewares
 
-app.enable('trust proxy');
+// app.enable('trust proxy');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
