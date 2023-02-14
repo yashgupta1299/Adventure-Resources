@@ -2,7 +2,7 @@
 // import axios from 'axios';
 import { showAlert } from './alerts';
 
-// const urlDomain = '';
+// const urlDomain = 'http://localhost:3000';
 const urlDomain = 'https://adventure-authentication.up.railway.app';
 
 export const login = async (email, password) => {
