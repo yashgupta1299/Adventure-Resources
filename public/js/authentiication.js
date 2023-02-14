@@ -2,8 +2,8 @@
 // import axios from 'axios';
 import { showAlert } from './alerts';
 
-const urlDomain = 'http://localhost:3000';
-// const urlDomain = 'https://adventure-authentication.up.railway.app';
+// const urlDomain = 'http://localhost:3000';
+const urlDomain = 'https://adventure-authentication.up.railway.app';
 
 export const login = async (email, password) => {
     try {
