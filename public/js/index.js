@@ -195,7 +195,8 @@ if (queryString) {
     if (isPreviousSignup === 'true') {
         showAlert(
             'success',
-            'You have already done Sign up before. If you have not set the password yet then please fill the form',
+            // 'You have already done Sign up before. If you have not set the password yet then please fill the form',
+            'Please Set Your Password!',
             20
         );
     }
