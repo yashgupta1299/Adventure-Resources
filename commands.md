@@ -1,4 +1,4 @@
-### Connect to local host
+### Connect to local host (works on proxy server also)
 
 1.a run in a terminal:
 "brew services start mongodb-community@6.0"
@@ -103,3 +103,26 @@ note: choosing first character also work
 4. in cookie Secure inside .env epmty string for false non empty string for true
 
 5. Inside frontend authentication.js update urlDomain as process.env.AUTHENTICATION_DOMAIN value
+
+## proxy for git
+
+1. Change proxyuser to your proxy user
+2. change proxypwd to your proxy password
+3. change proxy.server.com to the URL of your proxy server
+4. change 8080 to the proxy port configured on your proxy server
+   Note that this works for both http and https repos.
+   "git config --global http.proxy http://proxyuser:proxypwd@proxy.server.com:8080"
+
+5. If you decide at any time to reset this proxy and work without proxy:
+   "git config --global --unset http.proxy"
+
+6. Finally, to check the currently set proxy:
+   "git config --global --get http.proxy"
+
+## environment proxy
+
+1. Source of truth for environment proxy
+   "env | grep -i proxy"
+
+2. can change this to other proxy or remove proxy like
+   "HTTPS_PROXY="
