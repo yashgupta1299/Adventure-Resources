@@ -189,13 +189,22 @@ if (queryString) {
     const urlParams = new URLSearchParams(queryString);
     const signUpName = urlParams.get('signUpName');
     const isPreviousSignup = urlParams.get('isPreviousSignup');
+    const alert = urlParams.get('alert');
     if (signUpName) {
         document.querySelector('.nameSignup').value = decodeURI(signUpName);
     }
     if (isPreviousSignup === 'true') {
         showAlert(
             'success',
-            'You have already done Sign up before. If you have not set the password yet then please fill the form',
+            // 'You have already done Sign up before. If you have not set the password yet then please fill the form',
+            'Please Set Your Password!',
+            20
+        );
+    }
+    if(alert){
+        showAlert(
+            'error',
+            alert,
             20
         );
     }

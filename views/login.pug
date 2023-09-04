@@ -12,6 +12,7 @@ block content
                     label.form__label(for='password') Password
                     input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
                 .form__group
-                    a.btn.btn--green(href=`${process.env.AUTHENTICATION_DOMAIN}/auth` style='padding:0.99rem 3rem; font-family:arial;') forgot password
+                    a.btn.btn--green(href=`${process.env.AUTHENTICATION_DOMAIN}/auth/sta` style='padding:0.99rem 3rem; font-family:arial;') forgot password
                     button.btn.btn--green(style='float:right;') Login
-                    
+                .form__group
+                    a.login-with-google-btn(href=`${process.env.AUTHENTICATION_DOMAIN}/auth/signInwithGoogle`) Sign in with Google

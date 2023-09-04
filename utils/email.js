@@ -6,30 +6,33 @@ const { htmlToText } = require('html-to-text');
 module.exports = class Email {
     constructor(user, url) {
         this.to = user.email;
+        // this.cc = process.env.EMAIL_CC,
         this.from = `<${process.env.EMAIL_FROM}>`;
         this.firstName = user.name.split(' ')[0];
         this.url = url;
     }
 
     newTransport() {
-        if (process.env.NODE_ENV === 'production') {
-            // sendgrid
-            return nodemailer.createTransport({
-                service: 'SendGrid',
-                auth: {
-                    user: process.env.SENDGRID_USERNAME,
-                    pass: process.env.SENDGRID_PASSWORD
-                }
-            });
-        }
+        // if (process.env.NODE_ENV === 'production') {
         return nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: process.env.EMAIL_PORT,
+            // service: 'SendGrid',
+            service: 'SendinBlue',
             auth: {
-                user: process.env.EMAIL_USERNAME,
-                pass: process.env.EMAIL_PASSWORD
+                // user: process.env.SENDGRID_USERNAME,
+                user: process.env.BRAVO_EMAIL,
+                // pass: process.env.SENDGRID_PASSWORD
+                pass: process.env.BRAVO_APIKEY
             }
         });
+        // }
+        // return nodemailer.createTransport({
+        //     host: process.env.EMAIL_HOST,
+        //     port: process.env.EMAIL_PORT,
+        //     auth: {
+        //         user: process.env.EMAIL_USERNAME,
+        //         pass: process.env.EMAIL_PASSWORD
+        //     }
+        // });
     }
 
     // send the actual email
