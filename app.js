@@ -59,7 +59,9 @@ app.use(
             allowOrigins: ['*']
         },
         contentSecurityPolicy: {
+            // useDefaults: true,
             directives: {
+                'img-src': ['self', 'https: data:', 'http: data:'],
                 defaultSrc: ['*'],
                 scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"]
             }

@@ -55,11 +55,16 @@ exports.signup = catchAsync(async (req, res, next) => {
         // send the jwt token
         sendResponse(req.body.user, 201, req, res);
     } else {
+        const userPictureLink = (
+            await Google.findOne({ email: req.body.email })
+        ).picture;
+
         const newUser = await User.create({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
-            passwordConfirm: req.body.passwordConfirm
+            passwordConfirm: req.body.passwordConfirm,
+            photo: userPictureLink
         });
         // email send for uploading user photo
         const userNE = { name: newUser.name, email: newUser.email };

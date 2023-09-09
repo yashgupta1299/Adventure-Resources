@@ -21,6 +21,7 @@
     "author": "yashGupta",
     "license": "ISC",
     "dependencies": {
+        "@google-cloud/storage": "^7.1.0",
         "bcryptjs": "^2.4.3",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
@@ -58,6 +59,6 @@
         "prettier": "^1.17.0"
     },
     "engines": {
-        "node": "^19"
+        "node": "^18"
     }
 }

@@ -1,13 +1,14 @@
 const multer = require('multer');
+const { Storage } = require('@google-cloud/storage');
 const sharp = require('sharp');
-const fs = require('fs');
-const { promisify } = require('util');
+// const fs = require('fs');
+// const { promisify } = require('util');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/AppError');
 const factory = require('./handlerFactory');
 
-const unlinkAsync = promisify(fs.unlink);
+// const unlinkAsync = promisify(fs.unlink);
 
 // upload image processing
 
@@ -42,13 +43,44 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
     }
 
     // we store name to use in update me function
-    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
-    await sharp(req.file.buffer)
+    // const imageName = `user-${req.user.id}-${Date.now()}.jpeg`;
+    const imageName = `${req.user.id}.jpeg`;
+    // resize the image
+
+    const resizedImage = await sharp(req.file.buffer)
         .resize(500, 500) // it also reduces the file size to great extent say sometimes 1.5 MB to 150 KB
         .toFormat('jpeg')
         .jpeg({ quality: 90 }) // after resize again reducing percentage from 1 to 100
-        .toFile(`public/img/users/${req.file.filename}`);
+        .toBuffer();
+
+    const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+    const bucketName = process.env.GOOGLE_CLOUD_BUCKET_NAME;
+    const jsonKey = JSON.parse(process.env.GOOGLE_CLOUD_JSON_KEY);
+    const storageClient = new Storage({
+        projectId,
+        credentials: jsonKey // Use the JSON key for authentication
+    });
+
+    // Define the GCS file options
+    const fileOptions = {
+        destination: `users/image/${imageName}`, // Set the destination path
+        contentType: 'image/jpeg' // Set the content type accordingly
+    };
+
+    // Upload the image to GCS
+    await storageClient
+        .bucket(bucketName)
+        .file(fileOptions.destination)
+        .save(resizedImage, {
+            metadata: {
+                contentType: fileOptions.contentType,
+                cacheControl: 'no-cache'
+            }
+        });
+
+    // Get the URL of the uploaded image
+    req.file.filename = `https://storage.googleapis.com/${bucketName}/${fileOptions.destination}`;
 
     next();
 });
@@ -90,14 +122,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
 
     // remove old image from file system only if new exists and it is not default one
-    if (req.file && req.user.photo !== 'default.jpg') {
-        // Delete the file like normal
-        try {
-            await unlinkAsync(`public/img/users/${req.user.photo}`);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    // if (req.file && req.user.photo !== 'default.jpg') {
+    //     // Delete the file like normal
+    //     try {
+    //         await unlinkAsync(`public/img/users/${req.user.photo}`);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+
     res.status(200).json({
         status: 'success',
         data: {

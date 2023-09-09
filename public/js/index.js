@@ -139,12 +139,21 @@ if (imageChange) {
 
         const newUserPhotoName = await updateSettings(form, 'photo');
         if (newUserPhotoName) {
-            document
-                .querySelector('.nav__user-img')
-                .setAttribute('src', `/img/users/${newUserPhotoName}`);
-            document
-                .querySelector('.form__user-photo')
-                .setAttribute('src', `/img/users/${newUserPhotoName}`);
+            if(newUserPhotoName.startsWith('https')){
+                document
+                    .querySelector('.nav__user-img')
+                    .setAttribute('src', `${newUserPhotoName}`);
+                document
+                    .querySelector('.form__user-photo')
+                    .setAttribute('src', `${newUserPhotoName}`);
+            }else{
+                document
+                    .querySelector('.nav__user-img')
+                    .setAttribute('src', `/img/users/${newUserPhotoName}`);
+                document
+                    .querySelector('.form__user-photo')
+                    .setAttribute('src', `/img/users/${newUserPhotoName}`);
+            }
         }
     });
 }
