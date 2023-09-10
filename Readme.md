@@ -29,6 +29,7 @@ const rsaPemToJwk = require('rsa-pem-to-jwk');
 const jwksClient = require('jwks-rsa');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const { Storage } = require('@google-cloud/storage');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const cors = require('cors');
@@ -43,6 +44,7 @@ const helmet = require('helmet');
 > -   Generated JSON Web Key Set with openssl for authenticating a user with asymmetric keys.
 > -   Refresh tokens are implemented with 4096-bit and access tokens with 2048-bit encryption
 > -   Implemented Google OAuth 2.0 to verify user identity on signup and forgot password routes.
+> -   Google Cloud Platform (GCP) is a suite of cloud services offering computing, storage, and more.
 > -   BCrypt Algorithm is used to hash and salt passwords securely before saving them in a database.
 > -   Cross-Origin Resource Sharing (CORS) is used which is an HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading resources.
 > -   Rate limiting prevents the same IP address from making too many requests which will help us prevent attacks like brute force.

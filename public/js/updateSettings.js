@@ -26,6 +26,11 @@ export const updateSettings = async (data, type) => {
                     location.assign('/login');
                 }, 2500);
             } else {
+                // if we are reloading window then there is no need to update the name in js in index but
+                // that functionaly is still function for demo or test purpose
+                window.setTimeout(() => {
+                    location.reload(true);
+                }, 10);
                 showAlert(
                     'success',
                     `${type.toUpperCase()} updated successfully!`
