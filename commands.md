@@ -85,6 +85,7 @@ note: choosing first character also work
 
 6.b Remove directory from Git but NOT local
 "git rm -r --cached myFolder"
+"git merge -s recursive -X theirs --squash test1"
 
 ### Instructions to again start
 
