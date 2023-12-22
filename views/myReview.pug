@@ -14,8 +14,8 @@ mixin reviewCard(review)
         - if(user)
             - if (review.user.id === user.id)
                 .reviews__change 
-                    button.review__change.review__edit.review__edit(data-tourid=`/tour/${review.tour.slug}/#review--form`) Edit
-                    button.review__change.review__delete.review__delete(data-reviewid=`${review.id}`) Delete
+                    button.review__change.review__edit(data-tourid=`/tour/${review.tour.slug}/#review--form`) Edit
+                    button.review__change.review__delete(data-reviewid=`${review.id}`) Delete
 
 block content
     .reviews

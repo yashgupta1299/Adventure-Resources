@@ -1436,7 +1436,7 @@ body {
 }
 
 .review__edit {
-
+  cursor: pointer;
   text-transform: uppercase;
   color: #ffffff;
   transition: all 0.3s;
@@ -1450,6 +1450,7 @@ body {
 }
 
 .review__delete {
+  cursor: pointer;
   text-transform: uppercase;
   color: #ffffff;
   transition: all 0.3s;
