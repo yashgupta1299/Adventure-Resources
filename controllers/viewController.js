@@ -54,7 +54,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
     let myReview;
     let booking;
     if (req.user) {
-        myReview = await Review.findOne({ user: req.user.id });
+        myReview = await Review.findOne({ tour: tour.id, user: req.user.id });
         booking = await Booking.findOne({ tour: tour.id, user: req.user.id });
         // console.log(booking);
         if (booking) {
